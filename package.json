@@ -1,0 +1,31 @@
+{
+  "name": "bioinformaticsai-web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
+    "@ts-stack/markdown": "^1.5.0",
+    "@vueuse/core": "^10.11.0",
+    "axios": "^1.7.4",
+    "clipboard": "^2.0.11",
+    "element-plus": "^2.7.6",
+    "pinia": "^2.2.2",
+    "relation-graph-vue3": "^2.2.3",
+    "vant": "^4.9.4",
+    "vue": "^3.4.29",
+    "vue-router": "^4.4.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.5",
+    "sass": "^1.77.8",
+    "typescript": "^5.2.2",
+    "vite": "^5.3.1",
+    "vue-tsc": "^2.0.21"
+  }
+}
