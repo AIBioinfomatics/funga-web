@@ -30,7 +30,7 @@ function query(){
         ElMessageBox.alert('没有查询到相关结果.', '通知', {
           confirmButtonText: '返回查询界面',
           callback: (action:Action) => {
-            router.push("/gene-gene")
+            router.push("/gene-phenotype")
           },
         })
       }
