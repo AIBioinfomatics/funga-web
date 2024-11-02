@@ -24,7 +24,7 @@ function query(){
   if (store.phenotype.length == 0 || store.genes.length == 0){
     router.push("/gene-phenotype/search")
   }else {
-    search.genegene(store,data,function (){
+    search.genephenotype(store,data,function (){
       isLoad.value = true
       if (data.status == "Error"){
         ElMessageBox.alert('没有查询到相关结果.', '通知', {
