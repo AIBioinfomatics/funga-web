@@ -51,3 +51,10 @@ export const useGenePhenotypeStore = defineStore('genephenotype', {
         }
     },
 })
+export const useChatStore = defineStore('chat', {
+    state: () => {
+        return {
+            session: ref(""),
+        }
+    },
+})

@@ -2,6 +2,7 @@
 import ThemeToggleButton from "./ThemeToggleButton.vue";
 import router from "../router";
 import {ref} from "vue";
+import Assistant from "./Assistant.vue";
 const drawer = ref(false)
 
 const handleSelect = (key: string) => {
@@ -98,11 +99,11 @@ if (active.length == 0){
   </el-menu>
   <el-drawer v-model="drawer" direction="rtl">
     <template #header>
-      <h4>有什么需要提问的吗？</h4>
+      <h4>有什么需要帮助的吗？</h4>
     </template>
     <template  #default>
       <el-row>
-
+        <Assistant></Assistant>
       </el-row>
     </template>
   </el-drawer>

@@ -26,6 +26,7 @@ function query(){
   }else {
     search.genephenotype(store,data,function (){
       isLoad.value = true
+      console.log(JSON.stringify(data))
       if (data.status == "Error"){
         ElMessageBox.alert('没有查询到相关结果.', '通知', {
           confirmButtonText: '返回查询界面',
@@ -44,7 +45,7 @@ query()
 </script>
 
 <template>
-  <el-row>
+  <el-row v-loading="!isLoad">
     <el-col :span="4">
       <el-select
           v-model="store.current_select"
@@ -120,7 +121,7 @@ query()
           <h1>基因互作网络：</h1>
         </el-row>
         <el-col :span="24">
-          <Interactions v-if="store.current_select != '#all' && isLoad" :datas="data.graph"/>
+          <Interactions v-if="isLoad" :datas="data.graph"/>
           <div v-else>
             请选择物种
           </div>

@@ -1,8 +1,30 @@
 import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
 import {request} from "../network";
 import {AxiosResponse} from "axios";
+import {useChatStore} from "../pinia/Store.ts";
+
 
 export const search = {
+    chat:function (message:string,data:any,func: ()=> void){
+        var store = useChatStore()
+        const req_des_data = {
+            "sessionID": store.session,
+            "message": message
+        }
+        request("/chat",req_des_data,
+            function (state: boolean, res: AxiosResponse, status: number) {
+                if (state){
+                    Object.assign(data,res.data)
+                    func()
+                }else {
+                    ElMessage({
+                        message: `请求超时 ${status}`,
+                        type: "error"
+                    })
+                }
+            }
+        )
+    },
     genephenotype:function (store: any, data: any, func: () => void){
         const req_des_data = {
             "genes": store.genes,
@@ -14,6 +36,8 @@ export const search = {
         request("/get_gene_phenotype",req_des_data,
             function (state: boolean, res: AxiosResponse, status: number) {
                 if (state){
+                    var chat = useChatStore()
+                    chat.session = res.data["session"]
                     Object.assign(data,res.data)
                     func()
                 }else {
@@ -36,6 +60,8 @@ export const search = {
         request("/get_phenotype",req_des_data,
             function (state: boolean, res: AxiosResponse, status: number) {
                 if (state){
+                    var chat = useChatStore()
+                    chat.session = res.data["session"]
                     Object.assign(data,res.data)
                     func()
                 }else {
@@ -56,6 +82,8 @@ export const search = {
         request("/get_gene_gene",req_des_data,
             function (state: boolean, res: AxiosResponse, status: number) {
                 if (state){
+                    var chat = useChatStore()
+                    chat.session = res.data["session"]
                     Object.assign(data,res.data)
                     func()
                 }else {
@@ -76,7 +104,9 @@ export const search = {
         request("/blast",req_des_data,
             function (state: boolean, res: AxiosResponse, status: number) {
                 if (state){
+                    var chat = useChatStore()
                     data.length = 0
+                    chat.session = crypto.randomUUID();
                     Object.assign(data,res.data)
                     func()
                 }else {
@@ -117,6 +147,8 @@ export const search = {
         request("/get_gene",req_data,
             function (state: boolean, res: AxiosResponse, status: number) {
                 if (state){
+                    var chat = useChatStore()
+                    chat.session = res.data["session"]
                     Object.assign(data,res.data)
                     ElNotification({
                         title: '提醒',
