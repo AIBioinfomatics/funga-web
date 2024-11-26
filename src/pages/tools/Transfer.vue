@@ -2,10 +2,13 @@
 import {reactive, ref} from "vue";
 import {ArrowRightBold} from "@element-plus/icons-vue";
 import {ElMessage, genFileId, rangeArr, UploadInstance, UploadProps, UploadRawFile} from "element-plus";
-import {search} from "../tools";
-import {useBlastStore} from "../pinia/Store.ts";
+import {search} from "../../tools";
+import {useBlastStore} from "../../pinia/Store.ts";
 
-let result = reactive([])
+let result = reactive({
+  data:[],
+  session: ""
+})
 let is_wait = ref(false)
 const store = useBlastStore();
 const sequence = ref('')
@@ -91,7 +94,7 @@ function check(){
     </el-col>
     <el-col :span="10">
       <el-card style="height: 100%">
-        <el-table max-height="100%" v-loading="is_wait" :data="result" style="margin: auto 0">
+        <el-table max-height="100%" v-loading="is_wait" :data="result.data" style="margin: auto 0">
           <el-table-column label="Select ID" prop="origin_id">
           </el-table-column>
           <el-table-column label="System ID">

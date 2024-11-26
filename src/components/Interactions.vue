@@ -38,9 +38,11 @@ import {onMounted, ref} from "vue";
   function onNodeClick(nodeObject: RGNode){
     window.open("/gene/"+nodeObject.id)
   }
+
 </script>
 
 <template>
+
   <div style="height:calc(44vh);">
     <RelationGraph ref="graphRef" :options="graphOptions" :on-node-click="onNodeClick" :on-line-click="onLineClick" />
   </div>

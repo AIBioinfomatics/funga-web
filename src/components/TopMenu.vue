@@ -27,8 +27,11 @@ const handleSelect = (key: string) => {
   if (key == "gene-phenotype"){
     router.push({path:"/gene-phenotype"})
   }
-  if (key == "tools"){
-    router.push({path:"/tools"})
+  if (key == "transfer"){
+    router.push({path:"/transfer"})
+  }
+  if (key == "pos"){
+    router.push({path:"/phenotype-ontology-selector"})
   }
   if (key == "llm"){
     drawer.value = true
@@ -80,9 +83,11 @@ if (active.length == 0){
     <el-menu-item index="gene-phenotype">
       Gene-Phenotype
     </el-menu-item>
-    <el-menu-item index="tools">
-      Tools
-    </el-menu-item>
+    <el-sub-menu index="tools">
+      <template #title>Tools</template>
+      <el-menu-item index="transfer">Transfer</el-menu-item>
+      <el-menu-item index="pos">PhenotypeOntology</el-menu-item>
+    </el-sub-menu>
     <el-menu-item index="llm">
       Assistant
     </el-menu-item>
@@ -114,6 +119,14 @@ if (active.length == 0){
   flex-grow: 1;
 }
 
+.el-menu-item {
+  background-color: transparent !important;
+  border-bottom-color: transparent !important;
+}
+.el-sub-menu{
+  background-color: transparent !important;
+  border-bottom-color: transparent !important;
+}
 .el-menu-item {
   background-color: transparent !important;
   border-bottom-color: transparent !important;

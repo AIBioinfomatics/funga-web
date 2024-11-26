@@ -5,7 +5,6 @@ import GeneDisplay from "../pages/gene/GeneDisplay.vue";
 import GeneGene from "../pages/Gene-Gene.vue";
 import Phenotype from "../pages/Phenotype.vue";
 import GenePhenotype from "../pages/Gene-Phenotype.vue";
-import Tools from "../pages/Tools.vue";
 import GeneVague from "../pages/gene/GeneVague.vue";
 import GeneSearch from "../pages/gene/GeneSearch.vue";
 import GeneGeneSearch from "../pages/gene-gene/Gene-GeneSearch.vue";
@@ -14,6 +13,9 @@ import PhenotypeSearch from "../pages/phenotype/PhenotypeSearch.vue";
 import PhenotypeDisplay from "../pages/phenotype/PhenotypeDisplay.vue";
 import GenePhenotypeSearch from "../pages/gene-phenotype/Gene-PhenotypeSearch.vue";
 import GenePhenotypeDisplay from "../pages/gene-phenotype/Gene-PhenotypeDisplay.vue";
+import PhenotypeStandard from "../pages/phenotype/PhenotypeStandard.vue";
+import Transfer from "../pages/tools/Transfer.vue";
+import PhenotypeOntologySelector from "../pages/tools/PhenotypeOntologySelector.vue";
 
 const router = createRouter({
     history:createWebHistory(),
@@ -74,12 +76,20 @@ const router = createRouter({
             redirect: "/phenotype/search",
             children:[
                 {
+                    path: ":geneID",
+                    component: Gene
+                },
+                {
                     path: "search",
                     component:PhenotypeSearch
                 },
                 {
                     path: "display",
                     component:PhenotypeDisplay
+                },
+                {
+                    path: "standard",
+                    component: PhenotypeStandard
                 }
             ]
         },
@@ -99,14 +109,18 @@ const router = createRouter({
             ]
         },
         {
-            path: "/tools",
-            component: Tools,
+            path: "/transfer",
+            component: Transfer,
             children:[
                 {
                     path: ":sequences",
-                    component:Tools
+                    component:Transfer
                 }
             ]
+        },
+        {
+            path: "/phenotype-ontology-selector",
+            component: PhenotypeOntologySelector
         }
     ]
 })

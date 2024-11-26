@@ -5,28 +5,49 @@ import {ref} from "vue";
 
 const store = useGenePhenotypeStore()
 const geneCache = ref("")
+let cache = ref("")
 function select(){
   if (check().status){
     store.genes.length = 0
     Object.assign(store.genes,geneCache.value.split("\n"))
+    store.phenotypes.length = 0
+    Object.assign(store.phenotypes,cache.value.split(";"))
     router.push("/gene-phenotype/display")
   }
+}
+function input(){
+  cache.value = "heat;growth"
+  store.phenotypes.length = 0
+  Object.assign(store.phenotypes,["heat","growth"])
+  store.genes.length = 0
+  Object.assign(store.genes,[
+    "FY3T-3281",
+    "FY3T-3350",
+    "FY3T-2357",
+    "FY3T-13",
+    "FY3T-65",
+    "FY3T-342",
+    "FY3T-23544",
+    "FY3T-9870",
+    "FY3T-7878",
+    "FY3T-123",
+    "FY3T-43",
+    "FY3T-33"
+  ])
+  geneCache.value = store.genes.join("\n");
 }
 function check(){
   let result = {
     status: true,
     message: "Unknown"
   }
-  if (store.phenotype.length == 0 || store.phenotype.length == 0){
+  if (geneCache.value.length == 0 && cache.value.length == 0){
     result.status = false
     result.message = "不能为空"
   }
-  if (store.genes.join(",").startsWith(" ") || store.phenotype.startsWith(" ")){
-    result.status = false
-    result.message = "首字符不能为空格"
-  }
   return result
 }
+
 </script>
 
 <template>
@@ -34,7 +55,7 @@ function check(){
     <el-col :span="20">
       <el-row align="middle">
         <el-col :span="24">
-          <span>表型：</span><el-input v-model="store.phenotype" clearable/>
+          <span>表型：</span><el-input v-model="cache" clearable/>
         </el-col>
       </el-row>
       <br>
@@ -73,11 +94,15 @@ function check(){
       </el-row>
       <br>
       <el-row  justify="center" align="middle">
-        <el-button type="primary" @click="select">填充示例</el-button>
+        <el-button type="primary" @click="input">填充示例</el-button>
       </el-row>
       <br>
       <el-row  justify="center" align="middle">
         <el-button type="primary" @click="select">引导</el-button>
+      </el-row>
+      <el-row  justify="center" align="middle">
+        <el-checkbox v-model="store.include_outer" label="包含外部基因" value="include_outer" />
+        <el-checkbox v-model="store.type" label="交集搜索" value="intersection" />
       </el-row>
     </el-col>
   </el-row>

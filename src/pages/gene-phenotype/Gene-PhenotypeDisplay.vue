@@ -9,19 +9,23 @@ import { Marked } from '@ts-stack/markdown';
 
 let store = useGenePhenotypeStore()
 let isLoad = ref(false)
+let inter = ref()
 let data = reactive({
   databases: ["#all"],
   status: "OK",
   graph:{
 
   },
+  phenotype_ontology_mapping:[
+
+  ],
   genes:[
 
   ],
   summary: "### 正在生成中,请等待"
 })
 function query(){
-  if (store.phenotype.length == 0 || store.genes.length == 0){
+  if (store.phenotypes.length == 0 || store.genes.length == 0){
     router.push("/gene-phenotype/search")
   }else {
     search.genephenotype(store,data,function (){
@@ -84,18 +88,30 @@ query()
     </el-col>
     <el-col :span="19">
       <el-row align="middle" justify="center">
-        <el-collapse accordion style="width: 100%;">
-          <el-collapse-item title="Genes" name="1">
-            <div>
-              {{store.genes.join(";")}}
+        <el-card style="max-width: 480px">
+          <template #header>
+            <div class="card-header">
+              <span>Genes</span>
             </div>
-          </el-collapse-item>
-          <el-collapse-item title="Phenotype" name="2">
-            <div>
-              {{store.phenotype}}
+          </template>
+          <div>
+            <el-tag type="primary" v-for="d in store.genes">
+              {{ d }}
+            </el-tag>
+          </div>
+        </el-card>
+        <el-card style="max-width: 480px">
+          <template #header>
+            <div class="card-header">
+              <span>Phenotype</span>
             </div>
-          </el-collapse-item>
-        </el-collapse>
+          </template>
+          <div>
+            <el-tag type="primary" v-for="d in store.phenotypes">
+              {{ d }}
+            </el-tag>
+          </div>
+        </el-card>
       </el-row>
       <el-row>
         <el-row>
@@ -104,13 +120,14 @@ query()
         <el-col :span="24">
           <el-table :data="data.genes">
             <el-table-column prop="gene" label="基因"></el-table-column>
-            <el-table-column label="表型">
+            <el-table-column prop="phenotype" label="表型" width="180" />
+            <el-table-column prop="source" label="来源" width="180" />
+
+            <el-table-column label="引证">
               <template #default="scope">
-                <el-button @click="windows.showWindow('表型',['表型：' + scope.row.phenotype])">点击查看</el-button>
+                <el-button @click="windows.showWindow('引证',['引证：' + scope.row.reference])">点击查看</el-button>
               </template>
             </el-table-column>
-            <el-table-column prop="source" label="来源" width="180" />
-            <el-table-column prop="reference" label="引证" width="180" />
             <el-table-column prop="score" label="评分" />
             <el-table-column prop="similarity" label="相似度"></el-table-column>
           </el-table>
@@ -121,7 +138,7 @@ query()
           <h1>基因互作网络：</h1>
         </el-row>
         <el-col :span="24">
-          <Interactions v-if="isLoad" :datas="data.graph"/>
+          <Interactions ref="inter" v-if="isLoad" :datas="data.graph"/>
           <div v-else>
             请选择物种
           </div>

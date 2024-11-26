@@ -56,7 +56,7 @@ query()
 function blast(){
   let a = useBlastStore()
   a.content = data['sequence']
-  router.push("/tools")
+  router.push("/transfer")
 }
 </script>
 

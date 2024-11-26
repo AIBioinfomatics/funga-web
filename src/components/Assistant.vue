@@ -12,6 +12,10 @@ function handleMessage(message){
     message: "···",
     type: "chatbot"
   })
+  if (message === "/clear"){
+    histories.length = 0
+    return
+  }
   search.chat(message,histories,function (){
 
   })

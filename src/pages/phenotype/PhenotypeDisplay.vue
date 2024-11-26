@@ -79,7 +79,7 @@ query()
     <el-col :span="1">
       <el-divider style="height: 100%" direction="vertical"/>
     </el-col>
-    <el-col :span="19">
+    <el-col v-loading="!isLoad" :span="19">
       <el-row style="height: 10vh" align="middle" justify="center">
         <el-text type="primary" style="font-size: 10px">{{store.phenotype}}</el-text>
       </el-row>
@@ -87,16 +87,17 @@ query()
         <el-col :span="21">
           <h1>基因详情：</h1>
           <el-table :data="data.genes">
-            <el-table-column label="基因-表型">
+            <el-table-column prop="gene" label="基因" width="180" />
+            <el-table-column prop="phenotype" label="表型" width="180" />
+
+            <el-table-column prop="source" label="来源" width="180" />
+            <el-table-column prop="similarity" label="相似度"></el-table-column>
+            <el-table-column label="引证">
               <template #default="scope">
-                <el-button @click="windows.showWindow('基因-表型',['基因：' + scope.row.gene,'表型：' + scope.row.phenotype])">
-                  {{ scope.row.gene }}</el-button>
+                <el-button @click="windows.showWindow('引证',scope.row.reference)">点击查看</el-button>
               </template>
             </el-table-column>
-            <el-table-column prop="source" label="来源" width="180" />
-            <el-table-column prop="reference" label="引证" width="180" />
-            <el-table-column prop="score" label="评分" />
-            <el-table-column prop="similarity" label="相似度"></el-table-column>
+
             <el-table-column label="基因链接">
               <template #default="scope">
                 <el-button @click="windows.goLink('/gene/' + scope.row.gene)">点击查看</el-button>
@@ -116,9 +117,13 @@ query()
                 <el-button @click="windows.showWindow('Term',[scope.row.term])">点击查看</el-button>
               </template>
             </el-table-column>
-            <el-table-column prop="reference" label="引证" width="180" />
-            <el-table-column prop="score" label="评分" />
             <el-table-column prop="similarity" label="相似度"></el-table-column>
+            <el-table-column label="引证">
+              <template #default="scope">
+                <el-button @click="windows.showWindow('引证',scope.row.reference)">
+                  {{ scope.row.gene }}</el-button>
+              </template>
+            </el-table-column>
             <el-table-column label="链接">
               <template #default="scope">
                 <el-button @click="windows.goLink(scope.row.link)">点击前往</el-button>

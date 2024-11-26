@@ -40,10 +40,19 @@ export const usePhenotypeStore = defineStore('phenotype', {
         }
     },
 })
+export const usePhenotypeOntologySelectorStore = defineStore('PhenotypeOntologySelector', {
+    state: () => {
+        return {
+            current_select: ref('#none')
+        }
+    },
+})
 export const useGenePhenotypeStore = defineStore('genephenotype', {
     state: () => {
         return {
-            phenotype: ref(""),
+            include_outer : ref(true),
+            type : ref(false),
+            phenotypes: reactive([]),
             genes: reactive([]),
             current_select: ref('#all'),
             filter: ref(0.7),
@@ -54,7 +63,7 @@ export const useGenePhenotypeStore = defineStore('genephenotype', {
 export const useChatStore = defineStore('chat', {
     state: () => {
         return {
-            session: ref(""),
+            session: ref(crypto.randomUUID().toString()),
         }
     },
 })

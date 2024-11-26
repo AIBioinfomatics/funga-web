@@ -5,6 +5,59 @@ import {useChatStore} from "../pinia/Store.ts";
 
 
 export const search = {
+    getStatisticalData:function (data:any){
+        request("/phenotype_ontology_selector", {},
+            function (state: boolean, res: AxiosResponse, status: number) {
+                if (state){
+                    data.length = 0
+                    Object.assign(data,res.data)
+                }else {
+                    ElMessage({
+                        message: `请求超时 ${status}`,
+                        type: "error"
+                    })
+                }
+            }
+        )
+    },
+    phenotypeOntologySelector:function (store: any,data:any,func: ()=> void){
+        const req_des_data = {
+            "databases": [store.current_select]
+        }
+        request("/phenotype_ontology_selector",req_des_data,
+            function (state: boolean, res: AxiosResponse, status: number) {
+                if (state){
+                    data.length = 0
+                    Object.assign(data,res.data)
+                    func()
+                }else {
+                    ElMessage({
+                        message: `请求超时 ${status}`,
+                        type: "error"
+                    })
+                }
+            }
+        )
+    },
+    getPhenotypeOntology:function (store: any,id:string,data:any){
+        const req_des_data = {
+            "databases": [store.current_select],
+            "id":id
+        }
+        request("/phenotype_ontology_selector",req_des_data,
+            function (state: boolean, res: AxiosResponse, status: number) {
+                if (state){
+                    data.length = 0
+                    Object.assign(data,res.data)
+                }else {
+                    ElMessage({
+                        message: `请求超时 ${status}`,
+                        type: "error"
+                    })
+                }
+            }
+        )
+    },
     chat:function (message:string,data:any,func: ()=> void){
         var store = useChatStore()
         const req_des_data = {
@@ -14,6 +67,7 @@ export const search = {
         request("/chat",req_des_data,
             function (state: boolean, res: AxiosResponse, status: number) {
                 if (state){
+                    data.length = 0
                     Object.assign(data,res.data)
                     func()
                 }else {
@@ -26,14 +80,44 @@ export const search = {
         )
     },
     genephenotype:function (store: any, data: any, func: () => void){
+        var type = "union"
+        if (store.type == true){
+            type = "intersection"
+        }
         const req_des_data = {
             "genes": store.genes,
             "topK": store.topK,
             "filter":store.filter,
-            "phenotype": store.phenotype,
+            "include_outer": store.include_outer,
+            "type": type,
+            "phenotype": store.phenotypes,
             "databases": [store.current_select]
         }
+        alert(JSON.stringify(req_des_data))
         request("/get_gene_phenotype",req_des_data,
+            function (state: boolean, res: AxiosResponse, status: number) {
+                if (state){
+                    var chat = useChatStore()
+                    chat.session = res.data["session"]
+                    Object.assign(data,res.data)
+                    func()
+                }else {
+                    ElMessage({
+                        message: `请求超时 ${status}`,
+                        type: "error"
+                    })
+                }
+            }
+        )
+    },
+    phenotypeOntology:function (store: any, data: any, func: () => void){
+        const req_des_data = {
+            "content": store.phenotype,
+            "topK": store.topK,
+            "filter":store.filter,
+            "databases": [store.current_select]
+        }
+        request("/get_phenotype_ontology",req_des_data,
             function (state: boolean, res: AxiosResponse, status: number) {
                 if (state){
                     var chat = useChatStore()
@@ -106,7 +190,7 @@ export const search = {
                 if (state){
                     var chat = useChatStore()
                     data.length = 0
-                    chat.session = crypto.randomUUID();
+                    chat.session = res.data["session"]
                     Object.assign(data,res.data)
                     func()
                 }else {

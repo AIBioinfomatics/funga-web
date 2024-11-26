@@ -10,10 +10,15 @@ const submit = ref()
 const r1 = ref()
 const r2 = ref()
 const r3 = ref()
+const r4 = ref()
 const tour = ref(false)
 function select(){
   if (check().status){
-    router.push("/phenotype/display")
+    if (store.type == "standard"){
+      router.push("/phenotype/standard")
+    }else {
+      router.push("/phenotype/display")
+    }
   }
 }
 function check(){
@@ -46,6 +51,7 @@ function check(){
         <el-radio ref="r1" value="conservative">保守</el-radio>
         <el-radio ref="r2" value="tolerate">宽容</el-radio>
         <el-radio ref="r3" value="freedom">自由</el-radio>
+        <el-radio ref="r4" value="standard">标准</el-radio>
       </el-radio-group>
     </el-col>
   </el-row>
@@ -89,6 +95,9 @@ function check(){
     </el-tour-step>
     <el-tour-step :target="r3?.$el" title="自由搜索模式">
       <div>完全匹配您的表型，而不关心限定词.</div><br>
+    </el-tour-step>
+    <el-tour-step :target="r4?.$el" title="标准搜索模式">
+      <div>自己选择Phenotype Ontology.</div><br>
     </el-tour-step>
     <el-tour-step :target="submit?.$el" title="提交数据">
       <div>点击这里提交搜索.</div>
