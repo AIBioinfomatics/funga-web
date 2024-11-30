@@ -4,10 +4,13 @@ import {ArrowRightBold} from "@element-plus/icons-vue";
 import {ElMessage, genFileId, rangeArr, UploadInstance, UploadProps, UploadRawFile} from "element-plus";
 import {search} from "../../tools";
 import {useBlastStore} from "../../pinia/Store.ts";
+import {Result} from "../../network";
 
-let result = reactive({
-  data:[],
-  session: ""
+let data:Result = reactive({
+  databases:[""],
+  message: "",
+  status: false,
+  response:{}
 })
 let is_wait = ref(false)
 const store = useBlastStore();
@@ -53,7 +56,7 @@ function check(){
       return
     }
     is_wait.value = true
-    search.blast(store,result,function () {
+    search.blast(store,data,function () {
       is_wait.value = false
     })
   }else {
@@ -94,15 +97,17 @@ function check(){
     </el-col>
     <el-col :span="10">
       <el-card style="height: 100%">
-        <el-table max-height="100%" v-loading="is_wait" :data="result.data" style="margin: auto 0">
+        <el-table max-height="100%" v-loading="is_wait" :data="data.response['result']" style="margin: auto 0">
           <el-table-column label="Select ID" prop="origin_id">
           </el-table-column>
-          <el-table-column label="System ID">
+          <el-table-column label="FUNGA ID">
             <template #default="scope">
-              <el-tag style="cursor: pointer" @click="viewSequence(scope.row.sequence)">{{ scope.row.system_id }}</el-tag>
+              <el-tag style="cursor: pointer" @click="viewSequence(scope.row.sequence)">{{ scope.row.funga_id }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="standard_id" label="Gene Name"></el-table-column>
+          <el-table-column prop="type" label="Sequence Type"></el-table-column>
+          <el-table-column prop="symbol" label="Gene Symbol"></el-table-column>
+          <el-table-column prop="other_name" label="Other Name"></el-table-column>
           <el-table-column prop="source" label="Source"></el-table-column>
           <el-table-column prop="similarity" label="Similarity"></el-table-column>
         </el-table>

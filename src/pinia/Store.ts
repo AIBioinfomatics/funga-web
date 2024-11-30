@@ -33,7 +33,7 @@ export const usePhenotypeStore = defineStore('phenotype', {
     state: () => {
         return {
             phenotype: ref(""),
-            type: ref("conservative"),
+            type: ref("ontology"),
             current_select: ref('#all'),
             filter: ref(0.7),
             topK: ref(10)

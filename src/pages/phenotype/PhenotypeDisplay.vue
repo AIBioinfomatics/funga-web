@@ -5,26 +5,26 @@ import {usePhenotypeStore} from "../../pinia/Store.ts";
 import router from "../../router";
 import {search, windows} from "../../tools";
 import {Action, ElMessageBox} from "element-plus";
+import {Result} from "../../network";
+import SideBar from "../../components/SideBar.vue";
 
 const store = usePhenotypeStore()
 let isLoad = ref(false)
-let data = reactive({
-  databases: ["#all"],
-  genes:[
-
-  ],
-  go:[
-
-  ],
-  status: "OK"
+let data:Result = reactive({
+  databases:[""],
+  message: "",
+  status: false,
+  response:{}
 })
 function query(){
   if (store.phenotype.length == 0 || store.phenotype.length == 0){
     router.push("/phenotype/search")
   }else {
     search.phenotype(store,data,function (){
+      data.databases.shift()
+      store.current_select = data.databases[0]
       isLoad.value = true
-      if (data.status == "Error"){
+      if (!data.status){
         ElMessageBox.alert('没有查询到相关结果.', '通知', {
           confirmButtonText: '返回查询界面',
           callback: (action:Action) => {
@@ -33,49 +33,14 @@ function query(){
         })
       }
     })
-    search.description(store.current_select,descriptions)
   }
 }
-
-const descriptions = reactive([])
 query()
 </script>
 
 <template>
   <el-row>
-    <el-col :span="4">
-      <el-select
-          v-model="store.current_select"
-          filterable
-          placeholder="请选择物种"
-          @change="query()"
-      >
-        <el-option
-            label="全部"
-            value="#all"
-        />
-        <el-option
-            v-for="item in data.databases"
-            :key="item"
-            :label="item"
-            :value="item"
-        />
-      </el-select>
-
-      <div v-if="store.current_select != '#all'">
-        <el-collapse accordion>
-          <el-collapse-item v-for="descr in descriptions" :title="descr['source']" :name="descr['source']">
-            <div>
-              拉丁名：{{descr["latin"]}}<br>
-              中文名：{{descr["chinesename"]}}<br>
-              链接：<el-tag style="cursor: pointer" type="primary" @click="windows.goLink(descr['link'])">点击前往</el-tag><br>
-              描述：{{descr["description"]}}
-            </div>
-          </el-collapse-item>
-        </el-collapse>
-      </div>
-
-    </el-col>
+    <SideBar :databases="data.databases" :current_select="store.current_select" @change="query()"></SideBar>
     <el-col :span="1">
       <el-divider style="height: 100%" direction="vertical"/>
     </el-col>
@@ -86,11 +51,20 @@ query()
       <el-row>
         <el-col :span="21">
           <h1>基因详情：</h1>
-          <el-table :data="data.genes">
-            <el-table-column prop="gene" label="基因" width="180" />
+          <el-table :data="data.response[store.current_select]">
+            <el-table-column label="基因">
+              <template #default="scope">
+                <el-button @click="windows.goLink('/gene/' + scope.row.gene)">{{ scope.row.gene }}</el-button>
+              </template>
+            </el-table-column>
             <el-table-column prop="phenotype" label="表型" width="180" />
-
-            <el-table-column prop="source" label="来源" width="180" />
+            <el-table-column label="来源">
+              <template #default="scope">
+                <el-tag @click="windows.goLink(scope.row.source.link)">
+                  {{scope.row.source.name}}
+                </el-tag>
+              </template>
+            </el-table-column>
             <el-table-column prop="similarity" label="相似度"></el-table-column>
             <el-table-column label="引证">
               <template #default="scope">
@@ -98,11 +72,6 @@ query()
               </template>
             </el-table-column>
 
-            <el-table-column label="基因链接">
-              <template #default="scope">
-                <el-button @click="windows.goLink('/gene/' + scope.row.gene)">点击查看</el-button>
-              </template>
-            </el-table-column>
           </el-table>
         </el-col>
       </el-row>
@@ -110,7 +79,7 @@ query()
       <el-row>
         <el-col :span="21">
           <h1>Related GO：</h1>
-          <el-table :data="data.go">
+          <el-table :data="data.response['go']">
             <el-table-column prop="goid" label="GO ID" />
             <el-table-column label="标签">
               <template #default="scope">

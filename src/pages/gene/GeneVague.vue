@@ -1,23 +1,34 @@
 <script setup lang="ts">
 
-import {reactive} from "vue";
 import {useGeneStore} from "../../pinia/Store.ts";
-import {search} from "../../tools";
+import {search, windows} from "../../tools";
+import {Result} from "../../network";
+import SideBar from "../../components/SideBar.vue";
+import {reactive} from "vue";
 let store = useGeneStore()
 let isLoad = false
-let data = reactive({})
+let data:Result = reactive({
+  databases:[""],
+  message: "",
+  status: false,
+  response:{}
+})
 function query(){
   search.gene(store,data,function (){
+    data.databases.shift()
+    store.current_select = data.databases[0]
     isLoad = true
   })
 }
 query()
 function count() {
-  let c = 0
-  for (let dataKey in data) {
-    c+=data[dataKey].length
+  var size = 0
+  for (let dbName in data.response) {
+    if (dbName != "session"){
+      size += data.response[dbName].length
+    }
   }
-  return c
+  return size
 }
 </script>
 
@@ -40,22 +51,33 @@ function count() {
       />
     </el-col>
   </el-row>
-  <div v-else v-for="(value,key) in data">
-    <h1 style="font-size: 20px">模糊搜索关键词：{{store.content}},共计{{count()}}个搜索结果.</h1>
-    <el-card style="margin-top: 10px" v-for="gene in value">
-      <template #header>
-        <span>{{gene["system_id"]}}</span>
-      </template>
-      <el-descriptions size="large" :column="1" border>
-        <el-descriptions-item label="其他名称">{{ gene["standard_id"] }}</el-descriptions-item>
-        <el-descriptions-item label="基因描述">{{ gene["description"] }}</el-descriptions-item>
-        <el-descriptions-item label="相似性">{{ gene["similarity"] }}</el-descriptions-item>
-      </el-descriptions>
-      <template #footer>
-        来源: {{key}}
-      </template>
-    </el-card>
-  </div>
+  <el-row v-else>
+    <SideBar @change="query()" :databases="data.databases" :current_select="store.current_select"></SideBar>
+    <el-col :span="1">
+      <el-divider style="height: 100%" direction="vertical"/>
+    </el-col>
+    <el-col :span="19">
+      <el-card style="margin-top: 10px" v-for="gene in data.response[store.current_select]">
+        <template #header>
+          <span>{{gene["funga_id"]}}</span>
+        </template>
+        <el-descriptions size="large" :column="3" border>
+          <el-descriptions-item label="标准名称">{{ gene["symbol"] }}</el-descriptions-item>
+          <el-descriptions-item label="基因类型">{{ gene["type"] }}</el-descriptions-item>
+          <el-descriptions-item label="基因名字">{{ gene["name"] }}</el-descriptions-item>
+          <el-descriptions-item label="基因描述" :span="3">{{gene["description"]}}</el-descriptions-item>
+          <el-descriptions-item label="相似度">{{gene["similarity"]}}</el-descriptions-item>
+          <el-descriptions-item label="其他名称" :span="2">{{gene["other_name"]}}</el-descriptions-item>
+        </el-descriptions>
+        <template #footer>
+          来源:
+          <el-tag type="primary" @click="windows.goLink(gene['source']['link'])">
+            {{gene["source"]["name"]}}
+          </el-tag>
+        </template>
+      </el-card>
+    </el-col>
+  </el-row>
 </template>
 
 <style scoped>

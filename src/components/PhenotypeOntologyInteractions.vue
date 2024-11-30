@@ -52,7 +52,7 @@ const showGraph = async() => {
 };
 let store = usePhenotypeOntologySelectorStore()
 let info = reactive({
-  fungaid: "",
+  ontology_id: "",
   name:"",
   description:"",
   qualifiers: {
@@ -70,7 +70,7 @@ let dialogVisible = ref(false)
 <template>
   <el-dialog v-model="dialogVisible" title="详细信息查看" width="1000">
     <el-descriptions style="margin-bottom: 5px" border :column="2">
-      <el-descriptions-item label="ID">{{ info.fungaid}}</el-descriptions-item>
+      <el-descriptions-item label="UniqueId">{{ info.ontology_id}}</el-descriptions-item>
       <el-descriptions-item label="名称">{{ info.name }}</el-descriptions-item>
       <el-descriptions-item :span="2" label="描述">{{ info.description}}</el-descriptions-item>
       <el-descriptions-item :span="2" label="描述符">

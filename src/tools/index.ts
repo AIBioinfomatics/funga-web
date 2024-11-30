@@ -6,7 +6,7 @@ import {useChatStore} from "../pinia/Store.ts";
 
 export const search = {
     getStatisticalData:function (data:any){
-        request("/phenotype_ontology_selector", {},
+        request("/get_statistical_data", {},
             function (state: boolean, res: AxiosResponse, status: number) {
                 if (state){
                     data.length = 0
@@ -95,29 +95,6 @@ export const search = {
         }
         alert(JSON.stringify(req_des_data))
         request("/get_gene_phenotype",req_des_data,
-            function (state: boolean, res: AxiosResponse, status: number) {
-                if (state){
-                    var chat = useChatStore()
-                    chat.session = res.data["session"]
-                    Object.assign(data,res.data)
-                    func()
-                }else {
-                    ElMessage({
-                        message: `请求超时 ${status}`,
-                        type: "error"
-                    })
-                }
-            }
-        )
-    },
-    phenotypeOntology:function (store: any, data: any, func: () => void){
-        const req_des_data = {
-            "content": store.phenotype,
-            "topK": store.topK,
-            "filter":store.filter,
-            "databases": [store.current_select]
-        }
-        request("/get_phenotype_ontology",req_des_data,
             function (state: boolean, res: AxiosResponse, status: number) {
                 if (state){
                     var chat = useChatStore()
@@ -251,6 +228,18 @@ export const search = {
     }
 }
 export const windows = {
+    "getWebTitle":async function(url:string) {
+        try {
+            const response = await fetch(url);
+            const text = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(text, 'text/html');
+            return doc.title
+        } catch (error) {
+            console.error('Error fetching website metadata:', error);
+            return "";
+        }
+    },
     "goLink":function (url:string) {
         ElNotification({
             title: '提醒',
