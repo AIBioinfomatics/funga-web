@@ -21,18 +21,10 @@ function input(){
   Object.assign(store.phenotypes,["heat","growth"])
   store.genes.length = 0
   Object.assign(store.genes,[
-    "FY3T-3281",
-    "FY3T-3350",
-    "FY3T-2357",
-    "FY3T-13",
-    "FY3T-65",
-    "FY3T-342",
-    "FY3T-23544",
-    "FY3T-9870",
-    "FY3T-7878",
-    "FY3T-123",
-    "FY3T-43",
-    "FY3T-33"
+    "FUNGA-G-SAC-4707",
+    "ACT1",
+    "SMC6",
+    "BCY1"
   ])
   geneCache.value = store.genes.join("\n");
 }
@@ -47,7 +39,8 @@ function check(){
   }
   return result
 }
-
+geneCache.value = store.genes.join("\n")
+cache.value = store.phenotypes.join(";")
 </script>
 
 <template>
@@ -101,7 +94,6 @@ function check(){
         <el-button type="primary" @click="select">引导</el-button>
       </el-row>
       <el-row  justify="center" align="middle">
-        <el-checkbox v-model="store.include_outer" label="包含外部基因" value="include_outer" />
         <el-checkbox v-model="store.type" label="交集搜索" value="intersection" />
       </el-row>
     </el-col>

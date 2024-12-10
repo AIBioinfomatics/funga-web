@@ -3,6 +3,7 @@ import {useGeneStore} from "../../pinia/Store.ts";
 import {ElMessage} from "element-plus";
 import router from "../../router";
 import {ref} from "vue";
+import {lang} from "../../lang";
 let store = useGeneStore()
 
 let selectElement = ref()
@@ -19,7 +20,7 @@ function changeSelect(v:string) {
 }
 function selectID(){
   if (store.content == undefined || store.content.length == 0){
-    ElMessage('搜索不能为空.')
+    ElMessage(lang.display.common.empty)
     return
   }
   if (store.type == "vague"){
@@ -39,7 +40,7 @@ function selectID(){
               ref="inputElement"
     >
       <template #append>
-        <el-button ref="searchElement" @click="selectID">搜索</el-button>
+        <el-button ref="searchElement" @click="selectID">{{ lang.display.common.btn_search }}</el-button>
       </template>
       <template #prepend>
         <el-select ref="selectElement"
@@ -100,7 +101,7 @@ function selectID(){
       </el-text>
     </el-row>
     <el-row>
-      <el-button type="primary" @click="tour = true">开始引导</el-button>
+      <el-button type="primary" @click="tour = true">{{ lang.display.common.btn_tour }}</el-button>
     </el-row>
   </div>
   <el-tour v-model="tour" >

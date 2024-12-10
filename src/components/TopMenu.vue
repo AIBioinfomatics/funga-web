@@ -3,6 +3,7 @@ import ThemeToggleButton from "./ThemeToggleButton.vue";
 import router from "../router";
 import {ref} from "vue";
 import Assistant from "./Assistant.vue";
+import {lang, language} from "../lang";
 const drawer = ref(false)
 
 const handleSelect = (key: string) => {
@@ -69,29 +70,46 @@ if (active.length == 0){
       />
     </el-menu-item>
     <el-menu-item index="home">
-      Home
+      {{ lang.display.components.TopMenu.home }}
     </el-menu-item>
     <el-menu-item index="gene">
-      Gene
+      {{ lang.display.components.TopMenu.gene }}
     </el-menu-item>
     <el-menu-item index="gene-gene">
-      Gene-Gene
+      {{ lang.display.components.TopMenu.gene_gene }}
     </el-menu-item>
     <el-menu-item index="phenotype">
-      Phenotype
+      {{ lang.display.components.TopMenu.phenotype }}
     </el-menu-item>
     <el-menu-item index="gene-phenotype">
-      Gene-Phenotype
+      {{ lang.display.components.TopMenu.gene_phenotype }}
     </el-menu-item>
     <el-sub-menu index="tools">
-      <template #title>Tools</template>
-      <el-menu-item index="transfer">Transfer</el-menu-item>
-      <el-menu-item index="pos">PhenotypeOntology</el-menu-item>
+      <template #title>{{ lang.display.components.TopMenu.tool }}</template>
+      <el-menu-item index="transfer">{{ lang.display.components.TopMenu.transfer }}</el-menu-item>
+      <el-menu-item index="pos">{{ lang.display.components.TopMenu.selector }}</el-menu-item>
     </el-sub-menu>
     <el-menu-item index="llm">
-      Assistant
+      {{ lang.display.components.TopMenu.assistant }}
     </el-menu-item>
     <div class="flex-grow" />
+    <el-menu-item>
+      <el-select
+          v-model="language"
+          :placeholder="lang.displayName()"
+          style="width: 200px"
+          @change="lang.changeLang()"
+      >
+        <el-option
+            label="简体中文"
+            value="zh_CN"
+        />
+        <el-option
+            label="English"
+            value="en_US"
+        />
+      </el-select>
+    </el-menu-item>
     <el-menu-item index="theme"><ThemeToggleButton/></el-menu-item>
     <el-sub-menu index="2">
       <template #title>欢迎, Liu HX</template>

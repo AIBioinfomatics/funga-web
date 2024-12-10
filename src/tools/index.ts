@@ -2,9 +2,34 @@ import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
 import {request} from "../network";
 import {AxiosResponse} from "axios";
 import {useChatStore} from "../pinia/Store.ts";
+import {lang} from "../lang";
 
+export const prompt = {
+    generateSummary: "你现在扮演一个生物信息学领域的专家，从专业的角度，你认为根据现在已知的信息如何写一篇论文？\n" +
+        "写作以符合学术风格，提高拼写、语法、清晰度、简洁性和整体可读性。\n" +
+        "注意，不要胡编乱造，您需要按照格式写出文章，并且使用"+ lang.displayName() +"。\n"
+}
 
 export const search = {
+    getSummary:function (data:any,func: ()=> void){
+        request("/chat", {
+                sessionID: useChatStore().session,
+                message: prompt.generateSummary
+            },
+            function (state: boolean, res: AxiosResponse, status: number) {
+                if (state){
+                    data.length = 0
+                    Object.assign(data,res.data)
+                    func()
+                }else {
+                    ElMessage({
+                        message: `请求超时 ${status}`,
+                        type: "error"
+                    })
+                }
+            }
+        )
+    },
     getStatisticalData:function (data:any){
         request("/get_statistical_data", {},
             function (state: boolean, res: AxiosResponse, status: number) {
@@ -88,17 +113,15 @@ export const search = {
             "genes": store.genes,
             "topK": store.topK,
             "filter":store.filter,
-            "include_outer": store.include_outer,
             "type": type,
             "phenotype": store.phenotypes,
             "databases": [store.current_select]
         }
-        alert(JSON.stringify(req_des_data))
         request("/get_gene_phenotype",req_des_data,
             function (state: boolean, res: AxiosResponse, status: number) {
                 if (state){
                     var chat = useChatStore()
-                    chat.session = res.data["session"]
+                    chat.session = res.data["response"]["session"]
                     Object.assign(data,res.data)
                     func()
                 }else {
@@ -122,9 +145,10 @@ export const search = {
             function (state: boolean, res: AxiosResponse, status: number) {
                 if (state){
                     var chat = useChatStore()
-                    chat.session = res.data["session"]
+                    chat.session = res.data["response"]["session"]
                     Object.assign(data,res.data)
                     func()
+                    store.type = "ontology"
                 }else {
                     ElMessage({
                         message: `请求超时 ${status}`,
@@ -144,7 +168,7 @@ export const search = {
             function (state: boolean, res: AxiosResponse, status: number) {
                 if (state){
                     var chat = useChatStore()
-                    chat.session = res.data["session"]
+                    chat.session = res.data["response"]["session"]
                     Object.assign(data,res.data)
                     func()
                 }else {
@@ -167,7 +191,7 @@ export const search = {
                 if (state){
                     var chat = useChatStore()
                     data.length = 0
-                    chat.session = res.data["session"]
+                    chat.session = res.data["response"]["session"]
                     Object.assign(data,res.data)
                     func()
                 }else {
@@ -209,7 +233,7 @@ export const search = {
             function (state: boolean, res: AxiosResponse, status: number) {
                 if (state){
                     var chat = useChatStore()
-                    chat.session = res.data["session"]
+                    chat.session = res.data["response"]["session"]
                     Object.assign(data,res.data)
                     ElNotification({
                         title: '提醒',

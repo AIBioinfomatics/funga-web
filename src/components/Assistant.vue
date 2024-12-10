@@ -2,7 +2,8 @@
 import { Chat } from "@chat-ui/vue3";
 import {reactive} from "vue";
 import {search} from "../tools/index.ts";
-let histories = reactive([{ message: '欢迎使用FUNGA小助手', type: 'chatbot' }])
+import {lang} from "../lang/index.ts";
+let histories = reactive([{ message: lang.display["components"]["Assistant"]["message"], type: 'chatbot' }])
 function handleMessage(message){
   histories.push({
     message: message,

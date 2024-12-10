@@ -3,7 +3,7 @@ import RelationGraphComponent, {RGLine, RGLink, RGNode} from "relation-graph-vue
 
 let props = defineProps(["datas"])
 import RelationGraph, {RGOptions} from "relation-graph-vue3";
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
   const graphRef = ref<RelationGraphComponent | null>(null);
 
   const graphOptions: RGOptions = {
@@ -38,7 +38,6 @@ import {onMounted, ref} from "vue";
   function onNodeClick(nodeObject: RGNode){
     window.open("/gene/"+nodeObject.id)
   }
-
 </script>
 
 <template>

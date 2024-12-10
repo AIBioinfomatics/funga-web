@@ -13,7 +13,6 @@ import PhenotypeSearch from "../pages/phenotype/PhenotypeSearch.vue";
 import PhenotypeDisplay from "../pages/phenotype/PhenotypeDisplay.vue";
 import GenePhenotypeSearch from "../pages/gene-phenotype/Gene-PhenotypeSearch.vue";
 import GenePhenotypeDisplay from "../pages/gene-phenotype/Gene-PhenotypeDisplay.vue";
-import PhenotypeStandard from "../pages/phenotype/PhenotypeStandard.vue";
 import Transfer from "../pages/tools/Transfer.vue";
 import PhenotypeOntologySelector from "../pages/tools/PhenotypeOntologySelector.vue";
 
@@ -21,8 +20,8 @@ const router = createRouter({
     history:createWebHistory(),
     routes:[
         {
-          path:"/",
-          redirect: "/home"
+            path:"/",
+            redirect: "/home"
         },
         {
             path: "/home",
@@ -34,8 +33,8 @@ const router = createRouter({
             redirect: "/gene/search",
             children: [
                 {
-                  path: ":geneID",
-                  component: Gene
+                    path: ":geneID",
+                    component: Gene
                 },
                 {
                     path: "vague",
@@ -77,7 +76,7 @@ const router = createRouter({
             children:[
                 {
                     path: ":geneID",
-                    component: Gene
+                    component: Phenotype
                 },
                 {
                     path: "search",
@@ -86,10 +85,6 @@ const router = createRouter({
                 {
                     path: "display",
                     component:PhenotypeDisplay
-                },
-                {
-                    path: "standard",
-                    component: PhenotypeStandard
                 }
             ]
         },

@@ -4,8 +4,9 @@ import RelationGraphComponent, {RGLine, RGLink, RGNode} from "relation-graph-vue
 let props = defineProps(["datas"])
 import RelationGraph, {RGOptions} from "relation-graph-vue3";
 import {onMounted, reactive, ref} from "vue";
-import {search} from "../tools";
+import {search, windows} from "../tools";
 import {usePhenotypeOntologySelectorStore} from "../pinia/Store.ts";
+import {lang} from "../lang";
 const graphRef = ref<RelationGraphComponent | null>(null);
 
 const graphOptions: RGOptions = {
@@ -68,12 +69,15 @@ let dialogVisible = ref(false)
 </script>
 
 <template>
-  <el-dialog v-model="dialogVisible" title="详细信息查看" width="1000">
-    <el-descriptions style="margin-bottom: 5px" border :column="2">
-      <el-descriptions-item label="UniqueId">{{ info.ontology_id}}</el-descriptions-item>
-      <el-descriptions-item label="名称">{{ info.name }}</el-descriptions-item>
-      <el-descriptions-item :span="2" label="描述">{{ info.description}}</el-descriptions-item>
-      <el-descriptions-item :span="2" label="描述符">
+  <el-dialog v-model="dialogVisible" :title="lang.display.components.PhenotypeOntologyInteractions.title" width="1000">
+    <el-descriptions style="margin-bottom: 5px" border :column="3">
+      <el-descriptions-item :label="lang.display.components.PhenotypeOntologyInteractions.id">{{ info.ontology_id}}</el-descriptions-item>
+      <el-descriptions-item :label="lang.display.components.PhenotypeOntologyInteractions.name">{{ info.name }}</el-descriptions-item>
+      <el-descriptions-item :label="lang.display.components.PhenotypeOntologyInteractions.phenotype">
+        <el-button @click="windows.goLink('/phenotype/' + info.name)">查询表型</el-button>
+      </el-descriptions-item>
+      <el-descriptions-item :span="3" :label="lang.display.components.PhenotypeOntologyInteractions.description">{{ info.description}}</el-descriptions-item>
+      <el-descriptions-item :span="3" :label="lang.display.components.PhenotypeOntologyInteractions.qualifiers">
         <el-descriptions style="margin-bottom: 5px" border :column="1">
           <el-descriptions-item v-for="(key,item) in info.qualifiers" :label="item">{{ key }}</el-descriptions-item>
         </el-descriptions>

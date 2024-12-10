@@ -36,7 +36,7 @@ export const usePhenotypeStore = defineStore('phenotype', {
             type: ref("ontology"),
             current_select: ref('#all'),
             filter: ref(0.7),
-            topK: ref(10)
+            topK: ref(30)
         }
     },
 })
@@ -50,7 +50,6 @@ export const usePhenotypeOntologySelectorStore = defineStore('PhenotypeOntologyS
 export const useGenePhenotypeStore = defineStore('genephenotype', {
     state: () => {
         return {
-            include_outer : ref(true),
             type : ref(false),
             phenotypes: reactive([]),
             genes: reactive([]),

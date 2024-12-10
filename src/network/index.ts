@@ -3,7 +3,7 @@ import * as axios from "axios";
 export const key = "123456"
 export const client = axios.default.create(
     {
-        baseURL: "http://101.43.156.208:2497"
+        baseURL: "http://10.136.24.5:2497"
     }
 )
 export function request(url:string,data:any,func:any){

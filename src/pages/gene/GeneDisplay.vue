@@ -10,6 +10,7 @@ import {useBlastStore, useGeneStore} from "../../pinia/Store.ts";
 import {reactive, ref} from "vue";
 import router from "../../router";
 import {Result} from "../../network";
+import SideBar from "../../components/SideBar.vue";
 function copy(a:string){
   ElMessage({
     message: "复制成功",
@@ -20,7 +21,6 @@ function copy(a:string){
 }
 let store = useGeneStore()
 let isLoad = ref(false)
-const descriptions = reactive([])
 let data:Result = {
   databases:[""],
   message: "",
@@ -39,7 +39,6 @@ function query(){
     }
     data.databases.shift()
     store.current_select = data.databases[0]
-    search.description(store.current_select,descriptions)
     isLoad.value = true
   })
 }
@@ -55,39 +54,17 @@ function blast(){
 </script>
 
 <template>
-  <el-row v-if="isLoad">
-    <el-col :span="4">
-      <el-select
-          v-model="store.current_select"
-          filterable
-          placeholder="请选择物种"
-          @change="query()"
-      >
-        <el-option
-            v-for="item in data.databases"
-            :key="item"
-            :label="item"
-            :value="item"
-        />
-      </el-select>
-
-      <div>
-        <el-collapse accordion>
-          <el-collapse-item v-for="descr in descriptions" :title="descr['source']" :name="descr['source']">
-            <div>
-              拉丁名：{{descr["latin"]}}<br>
-              中文名：{{descr["chinesename"]}}<br>
-              链接：<el-tag style="cursor: pointer" type="primary" @click="windows.goLink(descr['link'])">点击前往</el-tag><br>
-              描述：{{descr["description"]}}
-            </div>
-          </el-collapse-item>
-        </el-collapse>
-      </div>
-
+  <el-row v-if="!isLoad" justify="center" align="middle">
+    <el-col :span="24">
+      <el-result
+          icon="info"
+          title="搜索中"
+          sub-title="请稍作等待···"
+      />
     </el-col>
-    <el-col :span="1">
-      <el-divider style="height: 100%" direction="vertical"/>
-    </el-col>
+  </el-row>
+  <el-row v-else>
+    <SideBar :current_select="store.current_select" :databases="data.databases" @change="query()"></SideBar>
     <el-col :span="19">
       <el-row style="margin: auto">
         <el-text type="primary">系统编号：</el-text>

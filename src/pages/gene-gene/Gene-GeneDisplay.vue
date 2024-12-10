@@ -27,6 +27,13 @@ let data:Result = reactive({
 function slice(){
   return [((currentPage.value-1)*10),(currentPage.value * 10)-1]
 }
+
+function getGeneName(id:string){
+  for (let map of data.response["gene_mapping"]) {
+    if (map["origin"] == id && store.current_select == map["db"]) return map["view"]
+  }
+}
+
 function query(){
   if (store.gene1.length == 0 || store.gene2.length == 0){
     router.push("/gene-gene/search")
@@ -80,8 +87,8 @@ query()
       <el-row justify="center">
         <el-col v-if="isLoad" :span="24">
           <el-descriptions v-for="item in data.response[store.current_select].slice(slice()[0],slice()[1])" style="margin-bottom: 5px" border :column="3">
-            <el-descriptions-item label="基因I">{{ item["gene1"]}}</el-descriptions-item>
-            <el-descriptions-item label="基因II">{{ item["gene2"] }}</el-descriptions-item>
+            <el-descriptions-item label="基因I">{{ getGeneName(item["gene1"])}}</el-descriptions-item>
+            <el-descriptions-item label="基因II">{{ getGeneName(item["gene2"]) }}</el-descriptions-item>
             <el-descriptions-item label="互作类型">{{ item["type"]}}</el-descriptions-item>
             <el-descriptions-item :span="3" label="来源">
               <el-tag type="primary" @click="windows.goLink(item['source']['link'])">

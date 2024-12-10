@@ -6,6 +6,7 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 import { createPinia } from 'pinia'
 import router from "./router";
+import VueCookies from 'vue3-cookies';
 
 const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
@@ -13,5 +14,6 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 }
 const pinia = createPinia()
 app.use(pinia)
+app.use(VueCookies)
 app.use(router)
 app.use(ElementPlus).mount('#app')
