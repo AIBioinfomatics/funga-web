@@ -1,14 +1,21 @@
 import {reactive, ref} from "vue";
 import {useCookies} from "vue3-cookies";
 
-export let language = ref("zh_CN")
+export let language = ref("en_US")
 
 const langCache = {
     en_US:{
+        common:{
+            empty: "The search cannot be empty",
+            btn_search: "Submit",
+            btn_tour: "Guidance"
+        },
         pages:{
             gene:{
                 search:{
-
+                    placeholder: "Please enter a gene or gene description.",
+                    accurate: "Precision patterns",
+                    vague: "Semantic patterns",
                 }
             }
         },
@@ -110,6 +117,6 @@ export const lang = {
         useCookies().cookies.set("language",language.value)
         window.location.reload()
     },
-    display: reactive(langCache.zh_CN)
+    display: reactive(langCache.en_US)
 }
 

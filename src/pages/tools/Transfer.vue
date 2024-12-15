@@ -2,7 +2,7 @@
 import {reactive, ref} from "vue";
 import {ArrowRightBold} from "@element-plus/icons-vue";
 import {ElMessage, genFileId, rangeArr, UploadInstance, UploadProps, UploadRawFile} from "element-plus";
-import {search} from "../../tools";
+import {search, windows} from "../../tools";
 import {useBlastStore} from "../../pinia/Store.ts";
 import {Result} from "../../network";
 
@@ -50,7 +50,7 @@ function check(){
   if (store.content.length != 0){
     if (is_wait.value){
       ElMessage({
-        message: `请等待上一次的请求查询完毕`,
+        message: `Please wait for the last request to be completed`,
         type: "warning"
       })
       return
@@ -60,7 +60,7 @@ function check(){
       is_wait.value = false
     })
   }else {
-    ElMessage("基因序列不符合语法规则")
+    ElMessage("The gene sequence does not conform to grammatical rules")
   }
 }
 </script>
@@ -73,15 +73,15 @@ function check(){
           v-model="store.content"
           resize="none"
           type="textarea"
-          placeholder="请输入基因序列"
+          placeholder="Please enter the gene sequence(fasta)"
           clearable
       />
     </el-col>
     <el-col style="text-align: center;margin: auto 0" :span="4">
       <el-icon v-for="i in rangeArr(10)"><ArrowRightBold :key="i" /></el-icon>
       <br>
-      <el-button id="search-button" type="primary" @click="check">搜索</el-button>
-      <el-button id="search-button" type="primary" @click="input">示例</el-button>
+      <el-button id="search-button" type="primary" @click="check">Submit</el-button>
+      <el-button id="search-button" type="primary" @click="input">Example</el-button>
       <el-upload
           ref="upload"
           class="upload-demo"
@@ -91,13 +91,13 @@ function check(){
           :before-upload="submitFile"
           :auto-upload="true"
       >
-        <el-button id="search-button" type="primary">上传</el-button>
+        <el-button id="search-button" type="primary">Upload</el-button>
       </el-upload>
-
+      <el-button @click="windows.saveFile('#data')" type="primary">Download</el-button>
     </el-col>
     <el-col :span="10">
       <el-card style="height: 100%">
-        <el-table max-height="100%" v-loading="is_wait" :data="data.response['result']" style="margin: auto 0">
+        <el-table id="data" max-height="100%" v-loading="is_wait" :data="data.response['result']" style="margin: auto 0">
           <el-table-column label="Select ID" prop="origin_id">
           </el-table-column>
           <el-table-column label="FUNGA ID">
@@ -105,9 +105,9 @@ function check(){
               <el-tag style="cursor: pointer" @click="viewSequence(scope.row.sequence)">{{ scope.row.funga_id }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="type" label="Sequence Type"></el-table-column>
-          <el-table-column prop="symbol" label="Gene Symbol"></el-table-column>
-          <el-table-column prop="other_name" label="Other Name"></el-table-column>
+          <el-table-column prop="type" label="Type"></el-table-column>
+          <el-table-column prop="symbol" label="Symbol"></el-table-column>
+          <el-table-column prop="other_name" label="Alias"></el-table-column>
           <el-table-column prop="source" label="Source"></el-table-column>
           <el-table-column prop="similarity" label="Similarity"></el-table-column>
         </el-table>
@@ -116,7 +116,7 @@ function check(){
   </el-row>
   <el-drawer v-model="drawer" direction="btt">
     <template #header>
-      <h4>基因序列</h4>
+      <h4>Gene sequences</h4>
     </template>
     <template #default>
       <el-input

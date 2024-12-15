@@ -9,6 +9,7 @@ import {onMounted, ref} from "vue";
   const graphOptions: RGOptions = {
     debug: false,
     defaultNodeBorderWidth: 0,
+    allowShowMiniToolBar: true,
     allowSwitchLineShape: true,
     allowSwitchJunctionPoint: true,
     defaultLineShape: 1,

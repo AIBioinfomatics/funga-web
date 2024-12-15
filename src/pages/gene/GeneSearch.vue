@@ -34,7 +34,7 @@ function selectID(){
 <template>
   <el-row justify="center" align="middle">
     <el-input v-model="store.content"
-              placeholder="请输入基因或描述内容..."
+              placeholder="Please enter a gene or description..."
               clearable
               @keyup.enter.native="selectID"
               ref="inputElement"
@@ -47,10 +47,10 @@ function selectID(){
             v-model="store.type"
             style="width: 110px"
         >
-          <el-option label="精确模式"
+          <el-option label="Precision patterns"
               value="accurate"
           />
-          <el-option label="语义模式"
+          <el-option label="Semantic patterns"
                      value="vague"
           />
         </el-select>
@@ -65,39 +65,39 @@ function selectID(){
     </el-row>
     <el-row>
       <el-text class="c">
-        * 在该页面，你可以使用
-        <el-tag>精确搜索</el-tag>
-        或
-        <el-tag>模糊搜索</el-tag>
-        来搜索您需要了解的基因.
+        * On this page, you can use
+        <el-tag>Precision patterns</el-tag>
+        or
+        <el-tag>Semantic patterns</el-tag>
+        to search for the genes you need to know.
       </el-text>
     </el-row>
     <el-row>
       <el-text class="c">
-        * 精确搜索:
+        * Precision patterns:
       </el-text>
     </el-row>
     <el-row>
       <el-text class="c">
-        精确搜索要求您输入无误的基因名称，您可以选择输入 基因名称 或 系统编号 。例如:
-        <el-button @click="insertInputValue('FY3T-3856')">系统编号</el-button>
-        <el-button @click="insertInputValue('SMC4')">基因名称</el-button>
+        The precision patterns requires you to enter an incorrect gene name, either by gene name or FUNGA ID. For example:
+        <el-button @click="insertInputValue('FY3T-3856')">FUNGA ID</el-button>
+        <el-button @click="insertInputValue('VPS70')">Gene Symbol</el-button>
       </el-text>
     </el-row>
     <el-row>
       <el-text class="c">
-        * 模糊搜索:
+        * Semantic patterns:
       </el-text>
     </el-row>
     <el-row>
       <el-text class="c">
-        亦或者，您不知道该基因的唯一编号或名称，您可以尝试搜索基因描述以获取一个基因列表，您可以通过点击基因列表里的任意一个基因前往基因描述界面,但前提是您需要选择模糊搜索方式，例如：
+        Or, if you don't know the unique number or name of the gene, you can try searching for a gene description to get a gene list, you can click on any gene in the gene list to go to the gene description interface, but only if you choose a fuzzy semantic patterns, for example:
         <el-button @click="insertInputValue('Actin');changeSelect('vague')">Actin</el-button>
       </el-text>
     </el-row>
     <el-row>
       <el-text class="c">
-        * 系统编号和基因名称可以通过Tools搜索
+        * The FUNGA ID and gene symbol can be searched through Transfer
       </el-text>
     </el-row>
     <el-row>
@@ -105,18 +105,18 @@ function selectID(){
     </el-row>
   </div>
   <el-tour v-model="tour" >
-    <el-tour-step :target="selectElement?.$el" title="选择搜索方式">
-      <div>在这里选择搜索方式.</div><br>
-      <div>精确模式：需要输入基因编号或基因名称.</div><br>
-      <div>语义模式：需要输入对该基因的描述.</div>
+    <el-tour-step :target="selectElement?.$el" title="Select how you want to search">
+      <div>Select your search method here</div><br>
+      <div>Precision pattern: You need to enter the FUNGA ID or gene name</div><br>
+      <div>Semantic pattern: A description of the gene needs to be entered</div>
     </el-tour-step>
-    <el-tour-step :target="inputElement?.$el" title="输入内容">
-      <div>在这里输入基因名称或描述内容.</div><br>
-      <div>例如在语义模式下：Actin</div><br>
-      <div>例如在精确模式下：FY3T-0</div>
+    <el-tour-step :target="inputElement?.$el" title="Input">
+<div>Enter the gene name or description here</div><br>
+      <div>For example, in semantic pattern: Actin</div><br>
+      <div>For example, in precision pattern: FY3T-0</div>
     </el-tour-step>
-    <el-tour-step :target="searchElement?.$el" title="提交数据">
-      <div>点击这里提交搜索.</div>
+    <el-tour-step :target="searchElement?.$el" title="Submit">
+      <div>Click it to submit.</div>
     </el-tour-step>
   </el-tour>
 </template>

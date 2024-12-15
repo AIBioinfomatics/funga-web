@@ -9,7 +9,7 @@ if (gene == undefined){
   router.push("/phenotype/search")
 }else {
   store.phenotype = <string>gene
-  store.type = "freedom"
+  store.type = "ontology"
   router.push("/phenotype/display")
 }
 </script>

@@ -26,8 +26,8 @@ function query(){
   search.phenotypeOntologySelector(store,data,function (){
     isLoad.value = true
     if (data.status == "Error"){
-      ElMessageBox.alert('没有查询到相关结果.', '通知', {
-        confirmButtonText: '返回查询界面',
+      ElMessageBox.alert('No results were queried.', 'Notice', {
+        confirmButtonText: 'Return to the query page',
         callback: (action:Action) => {
           router.push("/home")
         },
@@ -47,7 +47,7 @@ const descriptions = reactive([])
       <el-select
           v-model="store.current_select"
           filterable
-          placeholder="请选择物种"
+          placeholder="Please select a species"
           @change="query()"
       >
         <el-option
@@ -62,10 +62,10 @@ const descriptions = reactive([])
         <el-collapse accordion>
           <el-collapse-item v-for="descr in descriptions" :title="descr['source']" :name="descr['source']">
             <div>
-              拉丁名：{{descr["latin"]}}<br>
-              中文名：{{descr["chinesename"]}}<br>
-              链接：<el-tag style="cursor: pointer" type="primary" @click="windows.goLink(descr['link'])">点击前往</el-tag><br>
-              描述：{{descr["description"]}}
+              Latin name：{{descr["latin"]}}<br>
+              Chinese name：{{descr["chinesename"]}}<br>
+              Link：<el-tag style="cursor: pointer" type="primary" @click="windows.goLink(descr['link'])">Redirect</el-tag><br>
+              Description：{{descr["description"]}}
             </div>
           </el-collapse-item>
         </el-collapse>
@@ -77,7 +77,7 @@ const descriptions = reactive([])
     </el-col>
     <el-col v-loading="!isLoad" :span="19">
       <div v-if="store.current_select == '#none'">
-        请选择物种
+        Please select a species
       </div>
       <PhenotypeOntologyInteractions v-else-if="isLoad" :datas="graph()"></PhenotypeOntologyInteractions>
     </el-col>

@@ -7,6 +7,9 @@ import {search, windows} from "../../tools";
 import {Action, ElMessageBox} from "element-plus";
 import {Result} from "../../network";
 import SideBar from "../../components/SideBar.vue";
+import VueWordCloud from "vuewordcloud";
+import InfoFrame from "../../components/InfoFrame.vue";
+
 
 const store = usePhenotypeStore()
 let isLoad = ref(false)
@@ -23,6 +26,19 @@ function getGeneName(id:string){
   }
 }
 
+function getWords(){
+  let result:any[] = []
+  for (const obj of data.response[store.current_select]){
+    if (!result.map((ele)=> ele[0]).includes(obj["phenotype"])){
+      let cache = []
+      cache.push(obj["phenotype"])
+      cache.push(obj['similarity'])
+      result.push(cache)
+    }
+  }
+  return result
+}
+
 function query(){
   if (store.phenotype.length == 0 || store.phenotype.length == 0){
     router.push("/phenotype/search")
@@ -32,8 +48,8 @@ function query(){
       store.current_select = data.databases[0]
       isLoad.value = true
       if (!data.status){
-        ElMessageBox.alert('没有查询到相关结果.', '通知', {
-          confirmButtonText: '返回查询界面',
+        ElMessageBox.alert('No results were queried.', 'Notice', {
+          confirmButtonText: 'Return to the query page',
           callback: (action:Action) => {
             router.push("/phenotype")
           },
@@ -61,15 +77,28 @@ function importGP(){
   Object.assign(gp.genes,genes)
   router.push("/gene-phenotype/search")
 }
+
+function randomHexColor(weight:any[]) {
+  if (weight[1] > 0.9){
+    return "#FF6A6A"
+  }
+  var hex = Math.floor(Math.random() * 16777216).toString(16); //生成ffffff以内16进制数
+  while (hex.length < 6) {
+    hex = '0' + hex;
+  }
+  return '#' + hex;
+}
+
 </script>
 
 <template>
+
   <el-row v-if="!isLoad" justify="center" align="middle">
     <el-col :span="24">
       <el-result
           icon="info"
-          title="搜索中"
-          sub-title="请稍作等待···"
+          title="Loading"
+          sub-title="Please wait..."
       />
     </el-col>
   </el-row>
@@ -78,67 +107,97 @@ function importGP(){
     <el-col :span="1">
       <el-divider style="height: 100%" direction="vertical"/>
     </el-col>
-    <el-col v-loading="!isLoad" :span="19">
-      <el-row style="height: 10vh" align="middle" justify="center">
-        <el-text type="primary" style="font-size: 10px">{{store.phenotype}}</el-text>
+    <el-col :span="19">
+      <el-row justify="center">
+        <el-col :span="24">
+          <info-frame title="Information">
+            <el-descriptions :column="1" size="large" border>
+              <el-descriptions-item label="Phenotype searched">{{ store.phenotype }}</el-descriptions-item>
+              <el-descriptions-item label="Number of databases">{{ data.databases.length }}</el-descriptions-item>
+            </el-descriptions>
+          </info-frame>
+        </el-col>
       </el-row>
       <el-row>
-        <el-col :span="21">
-          <h1>基因详情：</h1>
-          <el-tag type="success">*已为您展示多条最佳结果如果您需要更精准的结果,请直接在表格内点击表型即可!</el-tag>
-          <el-tag type="primary" @click="importGP">点击导入至Gene-Phenotype</el-tag>
-          <el-table :data="data.response[store.current_select]" max-height="500">
-            <el-table-column label="基因">
-              <template #default="scope">
-                <el-button @click="windows.goLink('/gene/' + scope.row.gene)">{{ getGeneName(scope.row.gene) }}</el-button>
-              </template>
-            </el-table-column>
-            <el-table-column label="表型">
-              <template #default="scope">
-                <span style="cursor: pointer" @click="goPhenotype(scope.row.phenotype)">{{scope.row.phenotype}}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="来源">
-              <template #default="scope">
-                <el-tag @click="windows.goLink(scope.row.source.link)">
-                  {{scope.row.source.name}}
-                </el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column prop="similarity" label="相似度"></el-table-column>
-            <el-table-column label="引证">
-              <template #default="scope">
-                <el-button @click="windows.showWindow('引证',scope.row.reference)">点击查看</el-button>
-              </template>
-            </el-table-column>
+        <br>
+      </el-row>
 
-          </el-table>
+      <el-row justify="center">
+        <el-col :span="24" v-if="store.type == 'search'">
+          <info-frame title="Genes">
+            <el-tag type="primary" @click="importGP">Import Gene-Phenotype</el-tag>
+            <el-table :data="data.response[store.current_select]" max-height="500">
+              <el-table-column label="Gene">
+                <template #default="scope">
+                  <el-button @click="windows.goLink('/gene/' + scope.row.gene)">{{ getGeneName(scope.row.gene) }}</el-button>
+                </template>
+              </el-table-column>
+              <el-table-column label="Phenotype">
+                <template #default="scope">
+                  <span style="cursor: pointer" @click="goPhenotype(scope.row.phenotype)">{{scope.row.phenotype}}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="Source">
+                <template #default="scope">
+                  <el-tag @click="windows.goLink(scope.row.source.link)">
+                    {{scope.row.source.name}}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="Reference">
+                <template #default="scope">
+                  <el-button @click="windows.showWindow('Reference',scope.row.reference)">Show</el-button>
+                </template>
+              </el-table-column>
+
+            </el-table>
+          </info-frame>
+        </el-col>
+        <el-col :span="24" v-else>
+          <info-frame title="Phenotype Ontologies">
+            <vue-word-cloud :animation-duration="5000" enter-animation="animated flipX" leave-animation="animated flipX" font-family="Baloo Bhaijaan" :color="randomHexColor" :spacing="1" :font-size-ratio="1/5" style="height: 50vh;width: 100%" :words="getWords()">
+              <template #default="{text, weight, word}">
+                <el-tooltip :content="weight*100+'%'">
+                <span style="cursor: pointer;" @click="goPhenotype(word[0])">
+                  {{ text }}
+                </span>
+                </el-tooltip>
+              </template>
+            </vue-word-cloud>
+          </info-frame>
         </el-col>
       </el-row>
 
       <el-row>
-        <el-col :span="21">
-          <h1>Related GO：</h1>
-          <el-table :data="data.response['go']">
-            <el-table-column prop="goid" label="GO ID" />
-            <el-table-column label="标签">
-              <template #default="scope">
-                <el-button @click="windows.showWindow('Term',[scope.row.term])">点击查看</el-button>
-              </template>
-            </el-table-column>
-            <el-table-column prop="similarity" label="相似度"></el-table-column>
-            <el-table-column label="引证">
-              <template #default="scope">
-                <el-button @click="windows.showWindow('引证',scope.row.reference)">
-                  {{ scope.row.gene }}</el-button>
-              </template>
-            </el-table-column>
-            <el-table-column label="链接">
-              <template #default="scope">
-                <el-button @click="windows.goLink(scope.row.link)">点击前往</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
+        <br>
+      </el-row>
+
+      <el-row>
+        <el-col :span="24">
+          <info-frame title="Related Gene Ontology">
+            <el-table :data="data.response['go']">
+              <el-table-column prop="goid" label="GO ID" />
+              <el-table-column label="Term">
+                <template #default="scope">
+                  <el-button @click="windows.showWindow('Term',[scope.row.term])">Show</el-button>
+                </template>
+              </el-table-column>
+              <el-table-column prop="similarity" label="Similarity"></el-table-column>
+              <el-table-column label="Reference">
+                <template #default="scope">
+                <span style="cursor: pointer" @click="windows.goLink(scope.row.reference[0])" v-if='scope.row.reference.toString().split("/")[scope.row.reference.toString().split("/").length-1] != "-"'>
+                  {{scope.row.reference.toString().split("/")[scope.row.reference.toString().split("/").length-1]}}
+                </span>
+                  <span v-else>Empty</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="Link">
+                <template #default="scope">
+                  <el-button @click="windows.goLink(scope.row.link)">Redirect</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </info-frame>
         </el-col>
       </el-row>
 

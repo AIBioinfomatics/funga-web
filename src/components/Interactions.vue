@@ -3,11 +3,13 @@ import RelationGraphComponent, {RGLine, RGLink, RGNode} from "relation-graph-vue
 
 let props = defineProps(["datas"])
 import RelationGraph, {RGOptions} from "relation-graph-vue3";
-import {onMounted, ref, watch} from "vue";
+import {onMounted, ref} from "vue";
+
   const graphRef = ref<RelationGraphComponent | null>(null);
 
   const graphOptions: RGOptions = {
     debug: false,
+    allowShowMiniToolBar: true,
     defaultNodeBorderWidth: 2,
     allowSwitchLineShape: true,
     allowSwitchJunctionPoint: true,
@@ -42,8 +44,9 @@ import {onMounted, ref, watch} from "vue";
 
 <template>
 
-  <div style="height:calc(44vh);">
-    <RelationGraph ref="graphRef" :options="graphOptions" :on-node-click="onNodeClick" :on-line-click="onLineClick" />
+  <div style="height:calc(60vh);">
+    <RelationGraph ref="graphRef" :options="graphOptions" :on-node-click="onNodeClick" :on-line-click="onLineClick">
+    </RelationGraph>
   </div>
 </template>
 

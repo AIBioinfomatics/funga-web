@@ -32,7 +32,7 @@ query()
     <div>
       <el-collapse accordion>
         <el-collapse-item v-for="descr in descriptions" :title="descr['source']" :name="descr['source']">
-          <div v-if="descr['latin'] != null">
+          <div v-if="descr['latin'] != null || descr['latin'] != ''">
             {{ lang.display.components.SideBar.latin }}：<i>{{descr["latin"]}}</i><br>
             {{ lang.display.components.SideBar.chinese }}：{{descr["chinesename"]}}<br>
             {{ lang.display.components.SideBar.link }}：<el-tag style="cursor: pointer" type="primary" @click="windows.goLink(descr['link'])">点击前往</el-tag><br>

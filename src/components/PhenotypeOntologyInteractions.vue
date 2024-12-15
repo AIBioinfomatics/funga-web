@@ -22,6 +22,7 @@ const graphOptions: RGOptions = {
 
     }
   ],
+  "allowShowMiniToolBar": true,
   'defaultLineMarker': {
     'markerWidth': 12,
     'markerHeight': 12,

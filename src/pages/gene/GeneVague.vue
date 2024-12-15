@@ -37,8 +37,8 @@ function count() {
     <el-col :span="24">
       <el-result
           icon="error"
-          title="搜索失败"
-          :sub-title="'没有搜索到与 '+ store.content +' 有关的结果,请重试.'"
+          title="Failed"
+          :sub-title="'Didn\'t search with '+ store.content +' Please try again for the results.'"
       />
     </el-col>
   </el-row>
@@ -46,8 +46,8 @@ function count() {
     <el-col :span="24">
       <el-result
           icon="info"
-          title="搜索中"
-          sub-title="请稍作等待···"
+          title="Loading..."
+          sub-title="Please wait..."
       />
     </el-col>
   </el-row>
@@ -62,15 +62,15 @@ function count() {
           <span>{{gene["funga_id"]}}</span>
         </template>
         <el-descriptions size="large" :column="3" border>
-          <el-descriptions-item label="标准名称">{{ gene["symbol"] }}</el-descriptions-item>
-          <el-descriptions-item label="基因类型">{{ gene["type"] }}</el-descriptions-item>
-          <el-descriptions-item label="基因名字">{{ gene["name"] }}</el-descriptions-item>
-          <el-descriptions-item label="基因描述" :span="3">{{gene["description"]}}</el-descriptions-item>
-          <el-descriptions-item label="相似度">{{gene["similarity"]}}</el-descriptions-item>
-          <el-descriptions-item label="其他名称" :span="2">{{gene["other_name"]}}</el-descriptions-item>
+          <el-descriptions-item label="Symbol">{{ gene["symbol"] }}</el-descriptions-item>
+          <el-descriptions-item label="FeatureType">{{ gene["type"] }}</el-descriptions-item>
+          <el-descriptions-item label="Gene name">{{ gene["name"] }}</el-descriptions-item>
+          <el-descriptions-item label="Description" :span="3">{{gene["description"]}}</el-descriptions-item>
+          <el-descriptions-item label="Similarity">{{gene["similarity"]}}</el-descriptions-item>
+          <el-descriptions-item label="Alias" :span="2">{{gene["other_name"]}}</el-descriptions-item>
         </el-descriptions>
         <template #footer>
-          来源:
+          Source:
           <el-tag type="primary" @click="windows.goLink(gene['source']['link'])">
             {{gene["source"]["name"]}}
           </el-tag>

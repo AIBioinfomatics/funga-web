@@ -112,7 +112,7 @@ if (active.length == 0){
     </el-menu-item>
     <el-menu-item index="theme"><ThemeToggleButton/></el-menu-item>
     <el-sub-menu index="2">
-      <template #title>欢迎, Liu HX</template>
+      <template #title>Welcome, Liu HX</template>
       <div v-loading="true">
         <el-menu-item index="2-1">个人设置</el-menu-item>
         <el-menu-item index="2-2">余额：5000.00 CNY</el-menu-item>
@@ -122,7 +122,7 @@ if (active.length == 0){
   </el-menu>
   <el-drawer v-model="drawer" direction="rtl">
     <template #header>
-      <h4>有什么需要帮助的吗？</h4>
+      <h4>Can I help you？</h4>
     </template>
     <template  #default>
       <el-row>

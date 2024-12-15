@@ -3,6 +3,8 @@ import {request} from "../network";
 import {AxiosResponse} from "axios";
 import {useChatStore} from "../pinia/Store.ts";
 import {lang} from "../lang";
+import * as XLSX from "xlsx";
+import FileSaver from "file-saver";
 
 export const prompt = {
     generateSummary: "你现在扮演一个生物信息学领域的专家，从专业的角度，你认为根据现在已知的信息如何写一篇论文？\n" +
@@ -148,7 +150,7 @@ export const search = {
                     chat.session = res.data["response"]["session"]
                     Object.assign(data,res.data)
                     func()
-                    store.type = "ontology"
+
                 }else {
                     ElMessage({
                         message: `请求超时 ${status}`,
@@ -210,7 +212,6 @@ export const search = {
         request("/get_species_description",req_des_data,
             function (state: boolean, res: AxiosResponse, status: number) {
                 if (state){
-                    data.length = 0
                     Object.assign(data,res.data["data"])
                 }else {
                     ElMessage({
@@ -283,7 +284,24 @@ export const windows = {
         ElMessageBox.alert(values.join("\n"), title, {
             // if you want to disable its autofocus
             // autofocus: false,
-            confirmButtonText: '关闭',
+            confirmButtonText: '关闭'
         })
+    },
+    "saveFile":function saveFile(id:string) {
+        var wb = XLSX.utils.table_to_book(document.querySelector(id));//关联dom节点
+        /* get binary string as output */
+        var wbout = XLSX.write(wb, {
+            bookType: 'xlsx',
+            bookSST: true,
+            type: 'array'
+        })
+        try {
+            FileSaver.saveAs(new Blob([wbout], {
+                type: 'application/octet-stream'
+            }), 'result.xlsx')//自定义文件名
+        } catch (e) {
+            if (typeof console !== 'undefined') console.log(e, wbout);
+        }
+        return wbout
     }
 }

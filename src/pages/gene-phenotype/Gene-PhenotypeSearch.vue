@@ -24,7 +24,9 @@ function input(){
     "FUNGA-G-SAC-4707",
     "ACT1",
     "SMC6",
-    "BCY1"
+    "BCY1",
+    "MLP1",
+    "RIM21"
   ])
   geneCache.value = store.genes.join("\n");
 }
@@ -35,7 +37,7 @@ function check(){
   }
   if (geneCache.value.length == 0 && cache.value.length == 0){
     result.status = false
-    result.message = "不能为空"
+    result.message = "Not empty"
   }
   return result
 }
@@ -48,7 +50,7 @@ cache.value = store.phenotypes.join(";")
     <el-col :span="20">
       <el-row align="middle">
         <el-col :span="24">
-          <span>表型：</span><el-input v-model="cache" clearable/>
+          <span>Phenotype：</span><el-input v-model="cache" clearable/>
         </el-col>
       </el-row>
       <br>
@@ -59,7 +61,7 @@ cache.value = store.phenotypes.join(";")
               v-model="geneCache"
               resize="none"
               type="textarea"
-              placeholder="请输入基因列表(一行一个)"
+              placeholder="Please enter a list of genes (one per line)"
               clearable
           />
         </el-col>
@@ -70,7 +72,7 @@ cache.value = store.phenotypes.join(";")
         <el-col :span="24">
           <el-result
               icon="error"
-              title="不符合规则"
+              title="Not in accordance with the rules"
               :sub-title="check().message"
           />
         </el-col>
@@ -78,23 +80,23 @@ cache.value = store.phenotypes.join(";")
       <el-row v-else justify="center" align="middle">
         <el-result
             icon="success"
-            title="符合语法"
-            sub-title="点击提交开始搜索"
+            title="Grammatically compliant"
+            sub-title="Click Submit to start your search"
         />
       </el-row>
       <el-row  justify="center" align="middle">
-        <el-button type="primary" @click="select">提交</el-button>
+        <el-button type="primary" @click="select">Submit</el-button>
       </el-row>
       <br>
       <el-row  justify="center" align="middle">
-        <el-button type="primary" @click="input">填充示例</el-button>
+        <el-button type="primary" @click="input">Populate the sample data</el-button>
       </el-row>
       <br>
       <el-row  justify="center" align="middle">
-        <el-button type="primary" @click="select">引导</el-button>
+        <el-button type="primary" @click="select">Guidance</el-button>
       </el-row>
       <el-row  justify="center" align="middle">
-        <el-checkbox v-model="store.type" label="交集搜索" value="intersection" />
+        <el-checkbox v-model="store.type" label="Intersection Search" value="intersection" />
       </el-row>
     </el-col>
   </el-row>

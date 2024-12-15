@@ -8,6 +8,7 @@ import {Action, ElMessageBox} from "element-plus";
 import { Marked } from '@ts-stack/markdown';
 import {Result} from "../../network";
 import SideBar from "../../components/SideBar.vue";
+import InfoFrame from "../../components/InfoFrame.vue";
 
 type Gene = {
   gene:string,
@@ -20,7 +21,7 @@ type Gene = {
   reference:[],
   score:number
 }
-let summary = ref('正在生成中')
+let summary = ref('Generating in progress')
 let store = useGenePhenotypeStore()
 let isLoad = ref(false)
 let inter = ref()
@@ -31,15 +32,15 @@ let data:Result = reactive({
   response:{}
 })
 
-let filters = ref(['in-list'])
+let filters = ref([])
 function query(){
   if (store.phenotypes.length == 0 || store.genes.length == 0){
     router.push("/gene-phenotype/search")
   }else {
     search.genephenotype(store,data,function (){
       if (!data.status){
-        ElMessageBox.alert('没有查询到相关结果.', '通知', {
-          confirmButtonText: '返回查询界面',
+        ElMessageBox.alert('No results were queried.', 'Notice', {
+          confirmButtonText: 'Return to the query page',
           callback: (action:Action) => {
             router.push("/gene-phenotype")
           },
@@ -82,6 +83,14 @@ function containsAll(sup:string[],chi:string[]):boolean{
   }
   return true
 }
+function containsAny(sup:string[],chi:string[]):boolean{
+  for (let ele of chi) {
+    if (sup.includes(ele)){
+      return true
+    }
+  }
+  return false
+}
 function generateGraph() {
   graphData.lines.length = 0
   graphData.nodes.length = 0
@@ -117,12 +126,21 @@ function generateGraph() {
     state.value = state.value+1
   }
   for (let obj of data.response["graph"]["predict_genes"][store.current_select]) {
-    if (containsAll(obj["graph_type"],filters.value)){
+    graphData.lines.push(
+        {
+          from: getGeneName(obj["gene1"]),
+          to: getGeneName(obj["gene2"]),
+          text: obj["type"],
+        }
+    )
+  }
+  for (let obj of data.response["graph"]["outer_genes"][store.current_select]) {
+    for (let inter of obj["interaction"]){
       graphData.lines.push(
           {
-            from: getGeneName(obj["gene1"]),
-            to: getGeneName(obj["gene2"]),
-            type: obj["type"],
+            from: getGeneName(inter["gene1"]),
+            to: getGeneName(inter["gene2"]),
+            text: inter["type"],
           }
       )
     }
@@ -133,21 +151,19 @@ function onFilterChange() {
   Object.assign(graphData,{})
   let cache:Gene[] = []
   for (let obj of data.response["graph"]["func_genes"][store.current_select]) {
-    if (containsAll(obj["graph_type"],filters.value)){
-      cache.push(
-          {
-            gene: getGeneName(obj["gene"]),
-            tags: obj["graph_type"],
-            source: obj["source"],
-            reference: obj["reference"],
-            score:obj["score"],
-            phenotype: obj["phenotype"] == null ? "无" : obj["phenotype"]
-          }
-      )
-    }
+    cache.push(
+        {
+          gene: getGeneName(obj["gene"]),
+          tags: obj["graph_type"],
+          source: obj["source"],
+          reference: obj["reference"],
+          score:obj["score"],
+          phenotype: obj["phenotype"] == null ? "Empty" : obj["phenotype"]
+        }
+    )
   }
   for (let obj of data.response["graph"]["predict_genes"][store.current_select]) {
-    if (containsAll(obj["graph_type"],filters.value)){
+    if (containsAny(obj["graph_type"],filters.value)){
       cache.push(
           {
             gene: getGeneName(obj["name"]),
@@ -155,13 +171,13 @@ function onFilterChange() {
             source: obj["source"],
             reference: obj["reference"],
             score:obj["score"],
-            phenotype: "无"
+            phenotype: "Empty"
           }
       )
     }
   }
   for (let obj of data.response["graph"]["outer_genes"][store.current_select]) {
-    if (containsAll(obj["graph_type"],filters.value)){
+    if (containsAny(filters.value,["not-in-list"])){
       cache.push(
           {
             gene: getGeneName(obj["gene"]),
@@ -177,7 +193,47 @@ function onFilterChange() {
   Object.assign(tablesData,cache)
   generateGraph()
 }
+
+function transferTags(tags:string[]):string[]{
+  let result = []
+  for (let tag of tags) {
+    switch (tag){
+      case "in-list" : {
+        result.push("In list")
+        break
+      }
+      case "not-in-list" : {
+        result.push("Not in list")
+        break
+      }
+      case "distance-1" : {
+        result.push("One edge")
+        break
+      }
+      case "distance-2" : {
+        result.push("Two edges")
+        break
+      }
+      case "distance-3" : {
+        result.push("Three edges")
+        break
+      }
+      case "distance-0" : {
+        result.push("No edges")
+        break
+      }
+      case "related-phenotype" : {
+        result.push("Related Phenotype")
+        break
+      }
+    }
+  }
+  return result
+}
+
 query()
+
+
 </script>
 
 <template>
@@ -185,8 +241,8 @@ query()
     <el-col :span="24">
       <el-result
           icon="info"
-          title="搜索中"
-          sub-title="请稍作等待···"
+          title="Loading"
+          sub-title="Please wait..."
       />
     </el-col>
   </el-row>
@@ -196,89 +252,64 @@ query()
       <el-divider style="height: 100%" direction="vertical"/>
     </el-col>
     <el-col :span="19">
-      <el-row align="middle" justify="center">
-        <el-card style="max-width: 480px">
-          <template #header>
-            <div class="card-header">
-              <span>Genes</span>
-            </div>
-          </template>
-          <div>
-            <el-tag type="primary" v-for="d in store.genes">
-              {{ d }}
-            </el-tag>
-          </div>
-        </el-card>
-        <el-card style="max-width: 480px">
-          <template #header>
-            <div class="card-header">
-              <span>Phenotype</span>
-            </div>
-          </template>
-          <div>
-            <el-tag type="primary" v-for="d in store.phenotypes">
-              {{ d }}
-            </el-tag>
-          </div>
-        </el-card>
-      </el-row>
-      <el-row>
-        <el-row>
-          <h1>功能基因列表：</h1>
-        </el-row>
+      <el-row justify="center">
         <el-col :span="24">
-          <el-checkbox-group @change="onFilterChange()" v-model="filters">
-            <el-checkbox label="列表内" value="in-list" />
-            <el-checkbox label="距离为1" value="distance-1" />
-            <el-checkbox label="距离为2" value="distance-2" />
-            <el-checkbox label="距离为3" value="distance-3" />
-            <el-checkbox label="表型关联基因" value="related-phenotype" />
-            <el-checkbox label="非列表内" value="not-in-list" />
-          </el-checkbox-group>
-          <el-table :data="tablesData">
-            <el-table-column prop="gene" label="基因"></el-table-column>
-            <el-table-column label="标签">
-              <template #default="scope">
-                <el-tag v-for="tag in scope.row.tags">{{tag}}</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column label="额外信息">
-              <el-table-column label="来源">
-                <template #default="scope">
-                  <el-tag @click="windows.goLink(scope.source['link'])">{{scope.row.source["name"]}}</el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column prop="phenotype" label="关联表型" />
-              <el-table-column label="引证">
-                <template #default="scope">
-                  <el-button @click="windows.showWindow('引证',['引证：' + scope.row.reference])">点击查看</el-button>
-                </template>
-              </el-table-column>
-              <el-table-column prop="score" label="置信度(x 100%)" />
-            </el-table-column>
-          </el-table>
+          <info-frame title="Gene Interaction Network">
+            <el-checkbox-group @change="onFilterChange()" v-model="filters">
+              <el-checkbox label="Connected by an edge" value="distance-1" />
+              <el-checkbox label="Connected by two edges" value="distance-2" />
+              <el-checkbox label="Connected by three edges" value="distance-3" />
+              <el-checkbox label="Not in list" value="not-in-list" />
+            </el-checkbox-group>
+            <Interactions :key="state" ref="inter" v-if="isLoad" :datas="graphData"/>
+            <div v-else>
+              Please select a species
+            </div>
+          </info-frame>
         </el-col>
       </el-row>
       <el-row>
-        <el-row>
-          <h1>基因互作网络：</h1>
-        </el-row>
+        <br>
+      </el-row>
+      <el-row>
         <el-col :span="24">
-          <Interactions :key="state" ref="inter" v-if="isLoad" :datas="graphData"/>
-          <div v-else>
-            请选择物种
-          </div>
+          <info-frame title="Functional Genes">
+            <el-button type="success" @click="windows.saveFile('#data')">
+              Download Table
+            </el-button>
+            <el-table id="data" :data="tablesData">
+              <el-table-column prop="gene" label="Gene"></el-table-column>
+              <el-table-column label="Tags">
+                <template #default="scope">
+                  <el-tag v-for="tag in transferTags(scope.row.tags)">{{tag}}</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="Additional information">
+                <el-table-column label="Source">
+                  <template #default="scope">
+                    <el-tag @click="windows.goLink(scope.source['link'])">{{scope.row.source["name"]}}</el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="phenotype" label="Related Phenotype" />
+                <el-table-column label="Reference">
+                  <template #default="scope">
+                    <el-button @click="windows.showWindow('引证',['引证：' + scope.row.reference])">点击查看</el-button>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="score" label="Confidence (x 100%)" />
+              </el-table-column>
+            </el-table>
+          </info-frame>
         </el-col>
       </el-row>
       <el-row>
-        <el-row>
-          <el-tooltip content="重新生成?">
-            <h1 @click="generateSummary()">摘要：</h1>
-          </el-tooltip>
-        </el-row>
+        <br>
+      </el-row>
+      <el-row>
         <el-col :span="24">
-          <el-card shadow="always" v-html="Marked.parse(summary)">
-          </el-card>
+          <info-frame title="Summary" tooltip="Rebuild?">
+            <el-card shadow="always" v-html="Marked.parse(summary)" />
+          </info-frame>
         </el-col>
       </el-row>
     </el-col>

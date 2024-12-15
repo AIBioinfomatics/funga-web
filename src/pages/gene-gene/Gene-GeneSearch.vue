@@ -25,11 +25,11 @@ function check(){
   }
   if (store.gene1 == undefined || store.gene1.length == 0 || store.gene2 == undefined || store.gene2.length == 0){
     result.status = false
-    result.message = "基因ID不能为空"
+    result.message = "cannot be empty"
   }
   if (store.gene1.startsWith(" ") || store.gene2.startsWith(" ")){
     result.status = false
-    result.message = "基因ID首字符不能为空格"
+    result.message = "The first character cannot be a space"
   }
   return result
 }
@@ -38,28 +38,28 @@ function check(){
 <template>
   <el-row justify="center" align="middle">
     <el-col :span="6">
-      <span>基因一：</span><el-input ref="input1" v-model="store.gene1" clearable/>
+      <span>Gene I：</span><el-input ref="input1" v-model="store.gene1" clearable/>
     </el-col>
   </el-row>
   <br>
   <el-row  justify="center" align="middle">
     <el-col :span="6">
-      <span>基因二：</span><el-input ref="input2" v-model="store.gene2" clearable/>
+      <span>Gene II：</span><el-input ref="input2" v-model="store.gene2" clearable/>
     </el-col>
   </el-row>
   <br>
   <el-row  justify="center" align="middle">
     <el-col :span="6">
-      <el-button type="primary" ref="submit" @click="select">提交</el-button>
-      <el-button @click="tour = true">引导</el-button>
-      <el-button @click="write()">填充示例数据</el-button>
+      <el-button type="primary" ref="submit" @click="select">Submit</el-button>
+      <el-button @click="tour = true">Guide</el-button>
+      <el-button @click="write()">Populate the sample data</el-button>
     </el-col>
   </el-row>
   <el-row v-if="!check().status" justify="center" align="middle">
     <el-col :span="24">
       <el-result
           icon="error"
-          title="基因ID不符合规则"
+          title="Not in accordance with the rules"
           :sub-title="check().message"
       />
     </el-col>
@@ -68,22 +68,22 @@ function check(){
     <el-col :span="24">
       <el-result
           icon="success"
-          title="基因ID符合语法"
-          sub-title="点击提交开始搜索"
+          title="Grammatically compliant"
+          sub-title="Click Submit to start your search"
       />
     </el-col>
   </el-row>
   <el-tour v-model="tour" >
-    <el-tour-step :target="input1?.$el" title="基因1">
-      <div>在这里输入第一个基于名称,系统编号或基因名称都可以.</div><br>
-      <div>例如：FUN24</div>
+    <el-tour-step :target="input1?.$el" title="Gene I">
+      <div>Enter the first one here based on the name, the FUNGA ID or the gene name.</div><br>
+      <div>Example：FUN24</div>
     </el-tour-step>
-    <el-tour-step :target="input2?.$el" title="基因2">
-      <div>在这里输入第二个基于名称,系统编号或基因名称都可以.</div><br>
-      <div>例如：TFC1</div>
+    <el-tour-step :target="input2?.$el" title="Gene II">
+      <div>Enter the second one here based on the name, the FUNGA ID or the gene name.</div><br>
+      <div>Example：TFC1</div>
     </el-tour-step>
-    <el-tour-step :target="submit?.$el" title="提交数据">
-      <div>点击这里提交搜索.</div>
+    <el-tour-step :target="submit?.$el" title="Submit">
+      <div>Click here to submit.</div>
     </el-tour-step>
   </el-tour>
 </template>

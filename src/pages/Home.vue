@@ -2,6 +2,9 @@
 import {reactive} from "vue";
 import {windows} from "../tools";
 import {Bell, Document, Location, TrendCharts} from "@element-plus/icons-vue";
+import InfoFrame from "../components/InfoFrame.vue";
+import DisplayFrame from "../components/DisplayFrame.vue";
+import Interactions from "../components/Interactions.vue";
 const imgs = reactive([])
 const news = reactive([])
 simulate()
@@ -36,28 +39,65 @@ function simulate(){
     }
   ]
   Object.assign(news,data1)
+
 }
+const __graph_json_data = {
+  'rootId': 'a',
+  'nodes': [
+    { 'id': 'a', 'text': 'a', data: { iconColor: 'yellow', icon: 'el-icon-star-on' } },
+    { 'id': 'b', 'text': 'b', data: { iconColor: 'yellow', icon: 'el-icon-star-on' } },
+    { 'id': 'b1', 'text': 'b1', data: { iconColor: 'yellow', icon: 'el-icon-star-on' } },
+    { 'id': 'b1-1', 'text': 'b1-1', data: { iconColor: 'blue', icon: 'el-icon-user-solid' } },
+    { 'id': 'b1-2', 'text': 'b1-2', data: { iconColor: 'blue', icon: 'el-icon-user-solid' } },
+    { 'id': 'b1-3', 'text': 'b1-3', data: { iconColor: 'blue', icon: 'el-icon-user-solid' } },
+    { 'id': 'b1-4', 'text': 'b1-4', data: { iconColor: 'blue', icon: 'el-icon-s-promotion' } },
+    { 'id': 'b1-5', 'text': 'b1-5', data: { iconColor: 'blue', icon: 'el-icon-s-promotion' } },
+    { 'id': 'b1-6', 'text': 'b1-6', data: { iconColor: 'blue', icon: 'el-icon-s-promotion' } },
+    { 'id': 'b2', 'text': 'b2', data: { iconColor: 'red', icon:'el-icon-basketball' }},
+    { 'id': 'b2-1', 'text': 'b2-1', data: { iconColor: 'red', icon:'el-icon-basketball'} },
+    { 'id': 'b2-2', 'text': 'b2-2', data: { iconColor: 'red', icon:'el-icon-basketball'} },
+    { 'id': 'c', 'text': 'c', data: { iconColor: 'purple', icon: 'el-icon-potato-strips' } },
+    { 'id': 'c1', 'text': 'c1', data: { iconColor: 'purple', icon: 'el-icon-potato-strips' } },
+    { 'id': 'c2', 'text': 'c2', data: { iconColor: 'purple', icon: 'el-icon-potato-strips' } },
+    { 'id': 'c3', 'text': 'c3', data: { iconColor: 'purple', icon: 'el-icon-potato-strips' } }],
+  'lines': [
+    { 'from': 'a', 'to': 'b', text: '' },
+    { 'from': 'b', 'to': 'b1', text: '' },
+    { 'from': 'b1', 'to': 'b1-1', text: '' },
+    { 'from': 'b1', 'to': 'b1-2', text: '' },
+    { 'from': 'b1', 'to': 'b1-3', text: '' },
+    { 'from': 'b1', 'to': 'b1-4', text: '' },
+    { 'from': 'b1', 'to': 'b1-5', text: '' },
+    { 'from': 'b1', 'to': 'b1-6', text: '' },
+    { 'from': 'b', 'to': 'b2', text: '' },
+    { 'from': 'b2', 'to': 'b2-1', text: '' },
+    { 'from': 'b2', 'to': 'b2-2', text: '' },
+    { 'from': 'a', 'to': 'c', text: '' },
+    { 'from': 'c', 'to': 'c1', text: '' },
+    { 'from': 'c', 'to': 'c2', text: '' },
+    { 'from': 'c', 'to': 'c3', text: '' }]
+};
 </script>
 <template>
-  <el-row style="width: 100%">
-    <el-col :span="12" style="margin-top: 30px">
+  <el-row justify="center" style="width: 100%">
+    <el-col :span="11" style="margin-top: 30px">
       <div style="position: relative;top: 10%">
         <div class="box">
-          <el-text class="text" type="success">FUNGA-生物信息智能化</el-text><br>
+          <el-text class="text" type="success">FUNGA-Bioinformatics intelligence</el-text><br>
         </div>
         <div class="box">
-          <el-text class="text" style="font-size: 35px" type="primary">大语言模型助力生物数据分析···</el-text>
+          <el-text class="text" style="font-size: 35px" type="primary">Large language models help biological data analysis···</el-text>
         </div>
         <div class="box">
-          <el-text class="text" style="font-size: 20px">FUNGA集成了生物信息学和人工智能的大模型，能够高吞吐量地分析大规模生物数据。跨学科的融合将引领当前的生物学前沿，为相关领域带来新的研究和应用范式。它具有高度的可定制性，可以根据用户需求灵活配置，支持多种数据格式和处理方法，为用户提供全面的数据分析和决策支持能力。</el-text>
+          <el-text class="text" style="font-size: 20px">FUNGA integrates large models of bioinformatics and artificial intelligence to analyze large-scale biological data with high throughput. The integration of interdisciplines will lead the current frontier of biology and bring new research and application paradigms to related fields. It is highly customizable, can be flexibly configured according to user needs, supports a variety of data formats and processing methods, and provides users with comprehensive data analysis and decision support capabilities.</el-text>
         </div>
         <div class="box">
-          <el-button type="primary">使用文档</el-button>
-          <el-button >申请加入新品种</el-button>
+          <el-button type="primary">Documentation</el-button>
+          <el-button >New database</el-button>
         </div>
       </div>
     </el-col>
-    <el-col :span="12" style="margin-top: 15px">
+    <el-col :span="11" style="margin-top: 15px">
       <el-carousel indicator-position="outside" height="500px" motion-blur autoplay>
         <el-carousel-item v-for="item in imgs" :key="item['title']">
           <el-image @click="windows.goLink(item['url'])" style="cursor: pointer;height: 470px;width: 100%" fit="fill" :src="item['image']"></el-image>
@@ -68,49 +108,24 @@ function simulate(){
       </el-carousel>
     </el-col>
   </el-row>
-
-  <el-row justify="center" style="margin-top: 15px">
-    <el-card style="width: 480px" shadow="hover">
-      <el-row>
-        <el-icon size="40px"><Document /></el-icon>
-        <el-text size="large" style="margin-left: 10px">数据库数量</el-text>
-      </el-row>
-      <el-row style="margin-top: 10px">
-        <el-text>本站收集了包含菌物、动物以及植物的大量基因数据和表型数据，构建了超过300+数据库目录，通过大语言模型加速检索，能够快速的完成通用任务。</el-text>
-      </el-row>
-    </el-card>
-    <el-card style="width: 480px; margin-left: 20px" shadow="hover">
-      <el-row>
-        <el-icon size="40px"><TrendCharts /></el-icon>
-        <el-text size="large" style="margin-left: 10px">大语言模型助力</el-text>
-      </el-row>
-      <el-row style="margin-top: 10px">
-        <el-text>本项目使用新的算法和参数去修改或微调现有的开源大语言模型，达到垂直领域深度应用的效果。可捕获不同基因序列和表达在不同样品、组织和细胞在不同环境背景下的动态关联关系，模型参数规模达110亿。</el-text>
-      </el-row>
-    </el-card>
-    <el-card style="width: 480px; margin-left: 20px" shadow="hover">
-      <el-row>
-        <el-icon size="40px"><Location /></el-icon>
-        <el-text size="large" style="margin-left: 10px">无编程分析</el-text>
-      </el-row>
-      <el-row style="margin-top: 10px">
-        <el-text>通过训练整合不同物种的数据信息及先验知识，可以实现多个物种下游任务的迁移学习，充分展示了基于多物种无标注大数据预训练，再利用不同子任务数据进行模型微调的策略优势，有望成为实现基因功能和基因网络挖掘等生物问题分析预测的通用解决方案。</el-text>
-      </el-row>
-    </el-card>
-  </el-row>
   <el-row class="notice" justify="center">
     &nbsp
     <el-icon size="25px"><Bell /></el-icon>
     <el-text @click="windows.goLink(news[0]['url'])" style="cursor:pointer; margin-left: 5px">{{news[0]['title']}}</el-text>
     &nbsp&nbsp
   </el-row>
+  <br>
+  <display-frame title="Number of databases" img="/src/assets/database.png" content="This site has collected a large number of genetic data and phenotypic data including fungi, animals and plants, and built more than 300+ database catalogs, which can be used to accelerate retrieval through large language models and quickly complete general tasks."></display-frame>
+  <display-frame type="remap" title="Powered by large language models" img="/src/assets/llm.webp" content="This project uses new algorithms and parameters to modify or fine-tune existing open-source large language models to achieve the effect of in-depth application in vertical fields. It can capture the dynamic association of different gene sequences and expressions in different samples, tissues, and cells in different environmental backgrounds, with a model parameter scale of 11 billion."></display-frame>
+  <display-frame title="No programming analysis" img="/src/assets/code.jpg" content="By training and integrating the data information and prior knowledge of different species, the transfer learning of downstream tasks of multiple species can be realized, which fully demonstrates the strategic advantages of pre-training based on multi-species labeled big data and then using different sub-task data for model fine-tuning, which is expected to become a general solution for the analysis and prediction of biological problems such as gene function and gene network mining."></display-frame>
+  <display-frame type="remap" title="Experienced team" img="/src/assets/team.jpg" content="Our team has gathered a group of experts who have been deeply involved in the fields of artificial intelligence and bioinformatics for many years. With rich project experience and profound professional knowledge, they have successfully applied artificial intelligence technology to multiple bioinformatics research fields such as gene sequencing, protein structure prediction, and disease prediction. Our team is committed to promoting the deep integration of artificial intelligence and bioinformatics, providing efficient and accurate data analysis and solutions for researchers, and helping biomedical research make breakthrough progress."></display-frame>
 </template>
 <style scoped>
 :global(h2#card-usage ~ .example .example-showcase) {
   background-color: var(--el-fill-color) !important;
 }
 .text{
-  font-size: 50px;
+  font-size: 40px;
   font-family: 'Microsoft YaHei',serif;
 }
 .box{
