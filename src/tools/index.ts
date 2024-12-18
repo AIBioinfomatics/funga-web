@@ -5,6 +5,7 @@ import {useChatStore} from "../pinia/Store.ts";
 import {lang} from "../lang";
 import * as XLSX from "xlsx";
 import FileSaver from "file-saver";
+import {Graph} from "../pages/gene-phenotype/Gene-PhenotypeDisplay.vue";
 
 export const prompt = {
     generateSummary: "你现在扮演一个生物信息学领域的专家，从专业的角度，你认为根据现在已知的信息如何写一篇论文？\n" +
@@ -303,5 +304,56 @@ export const windows = {
             if (typeof console !== 'undefined') console.log(e, wbout);
         }
         return wbout
+    }
+}
+export const graph = {
+    group:function (graphData:Graph):Graph[] {
+        const groups: Graph[] = [];
+        const nodeMap = new Map<string, Node>();
+        const visited = new Set<string>();
+
+        // 创建节点映射，方便通过文本查找节点对象
+        graphData.nodes.forEach(node => {
+            nodeMap.set(node.text, node);
+        });
+
+        // 遍历所有节点，进行分组
+        graphData.nodes.forEach(node => {
+            if (!visited.has(node.text)) {
+                const group: Graph = { nodes: [], lines: [] };
+                const stack = [node.text];
+
+                while (stack.length > 0) {
+                    const currentNodeText = stack.pop()!;
+                    if (!visited.has(currentNodeText)) {
+                        visited.add(currentNodeText);
+                        const currentNode = nodeMap.get(currentNodeText)!;
+                        if (currentNode != null){
+                            group.nodes.push(currentNode);
+                        }
+
+
+                        // 找到所有与当前节点相连的节点和线条
+                        const connectedLines = graphData.lines.filter(line => line.from === currentNodeText || line.to === currentNodeText);
+                        connectedLines.forEach(line => {
+                            const connectedNodeText = line.from === currentNodeText ? line.to : line.from;
+                            if (!visited.has(connectedNodeText)) {
+                                stack.push(connectedNodeText);
+                            }
+                            // 如果这条线还没有被添加到分组中，则添加
+                            if (!group.lines.some(l => l.from === line.from && l.to === line.to)) {
+                                group.lines.push(line);
+                            }
+                        });
+                    }
+                }
+
+                if (group.nodes.length > 0) {
+                    groups.push(group);
+                }
+            }
+        });
+
+        return groups;
     }
 }

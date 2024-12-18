@@ -1,14 +1,49 @@
 <script setup lang="ts">
 import {reactive, ref} from "vue";
-import {search, windows} from "../../tools";
+import {graph, search, windows} from "../../tools";
 import Interactions from "../../components/Interactions.vue";
 import {useGenePhenotypeStore} from "../../pinia/Store.ts";
 import router from "../../router";
-import {Action, ElMessageBox} from "element-plus";
+import {Action, ElMessage, ElMessageBox} from "element-plus";
 import { Marked } from '@ts-stack/markdown';
 import {Result} from "../../network";
 import SideBar from "../../components/SideBar.vue";
 import InfoFrame from "../../components/InfoFrame.vue";
+import {lang} from "../../lang";
+
+const groups:Graph[] = reactive([])
+let viewGroupData = reactive({nodes:[],lines:[]})
+const currentSelectGroupIndex = ref(0)
+let searchToolContent = ref('')
+let selected = reactive([])
+
+function onSelected(v:any[]) {
+  if (v.length == 0){
+    generateGraph(tablesData)
+    return
+  }
+  selected.length = 0
+  Object.assign(selected,v)
+  generateGraph(selected)
+}
+
+function searchGene() {
+  for (let i = 0; i < groups.length; i++) {
+    if (groups[i].nodes.map((ele)=>ele['text']).includes(searchToolContent.value)){
+      currentSelectGroupIndex.value = i
+      changeView()
+      ElMessage({
+        type:"success",
+        message: "Change Group " + i +"."
+      })
+      return
+    }
+  }
+  ElMessage({
+    type:"error",
+    message: "Query Failed."
+  })
+}
 
 type Gene = {
   gene:string,
@@ -21,6 +56,7 @@ type Gene = {
   reference:[],
   score:number
 }
+let toolsName = ref('Append')
 let summary = ref('Generating in progress')
 let store = useGenePhenotypeStore()
 let isLoad = ref(false)
@@ -55,13 +91,13 @@ function query(){
     })
   }
 }
-type Graph = {
+export type Graph = {
   nodes:any[],
   lines:any[]
 }
 let state = ref(1)
 let tablesData = reactive([])
-let graphData:Graph = reactive({nodes:[],lines:[]})
+let graphData:Graph = {nodes:[],lines:[]}
 
 function generateSummary(){
   let history = reactive([])
@@ -91,10 +127,10 @@ function containsAny(sup:string[],chi:string[]):boolean{
   }
   return false
 }
-function generateGraph() {
+function generateGraph(td:any[]) {
   graphData.lines.length = 0
   graphData.nodes.length = 0
-  for (let geneData of tablesData) {
+  for (let geneData of td) {
     var cache = {}
     if (containsAll(geneData["tags"],["in-list",'related-phenotype'])){
       cache = {
@@ -126,25 +162,32 @@ function generateGraph() {
     state.value = state.value+1
   }
   for (let obj of data.response["graph"]["predict_genes"][store.current_select]) {
-    graphData.lines.push(
-        {
-          from: getGeneName(obj["gene1"]),
-          to: getGeneName(obj["gene2"]),
-          text: obj["type"],
-        }
-    )
-  }
-  for (let obj of data.response["graph"]["outer_genes"][store.current_select]) {
-    for (let inter of obj["interaction"]){
+    if (graphData.nodes.map((ele)=>ele["text"]).includes(getGeneName(obj["gene1"])) || graphData.nodes.map((ele)=>ele["text"]).includes(getGeneName(obj["gene2"]))){
       graphData.lines.push(
           {
-            from: getGeneName(inter["gene1"]),
-            to: getGeneName(inter["gene2"]),
-            text: inter["type"],
+            from: getGeneName(obj["gene1"]),
+            to: getGeneName(obj["gene2"]),
+            text: obj["type"],
           }
       )
     }
   }
+  for (let obj of data.response["graph"]["outer_genes"][store.current_select]) {
+    for (let inter of obj["interaction"]){
+      if (graphData.nodes.map((ele)=>ele["text"]).includes(getGeneName(inter["gene1"])) || graphData.nodes.map((ele)=>ele["text"]).includes(getGeneName(inter["gene2"]))){
+        graphData.lines.push(
+            {
+              from: getGeneName(inter["gene1"]),
+              to: getGeneName(inter["gene2"]),
+              text: inter["type"],
+            }
+        )
+      }
+    }
+  }
+  Object.assign(groups,graph.group(graphData))
+  currentSelectGroupIndex.value = -1
+  changeView()
 }
 function onFilterChange() {
   tablesData.length = 0
@@ -191,7 +234,7 @@ function onFilterChange() {
     }
   }
   Object.assign(tablesData,cache)
-  generateGraph()
+  generateGraph(tablesData)
 }
 
 function transferTags(tags:string[]):string[]{
@@ -231,6 +274,14 @@ function transferTags(tags:string[]):string[]{
   return result
 }
 
+function changeView(){
+  if (currentSelectGroupIndex.value == -1){
+    Object.assign(viewGroupData,graphData)
+  }else {
+    Object.assign(viewGroupData,groups[currentSelectGroupIndex.value])
+  }
+}
+
 query()
 
 
@@ -255,16 +306,58 @@ query()
       <el-row justify="center">
         <el-col :span="24">
           <info-frame title="Gene Interaction Network">
-            <el-checkbox-group @change="onFilterChange()" v-model="filters">
-              <el-checkbox label="Connected by an edge" value="distance-1" />
-              <el-checkbox label="Connected by two edges" value="distance-2" />
-              <el-checkbox label="Connected by three edges" value="distance-3" />
-              <el-checkbox label="Not in list" value="not-in-list" />
-            </el-checkbox-group>
-            <Interactions :key="state" ref="inter" v-if="isLoad" :datas="graphData"/>
-            <div v-else>
-              Please select a species
-            </div>
+            <el-segmented block v-model="toolsName" :options="['Append', 'Group', 'Search']">
+            </el-segmented>
+            <el-row>
+              <el-col :span="24">
+                <el-card>
+                  <el-checkbox-group v-if="toolsName == 'Append'" @change="onFilterChange()" v-model="filters">
+                    <el-checkbox label="Connected by an edge" value="distance-1" />
+                    <el-checkbox label="Connected by two edges" value="distance-2" />
+                    <el-checkbox label="Connected by three edges" value="distance-3" />
+                    <el-checkbox label="Not in list" value="not-in-list" />
+                  </el-checkbox-group>
+                  <el-select
+                      v-else-if="toolsName == 'Group'"
+                      v-model="currentSelectGroupIndex"
+                      placeholder="Group All"
+                      style="width: 240px"
+                      @change="changeView()"
+                      filterable
+                  >
+                    <el-option
+                        :key="-1"
+                        label="Group All"
+                        :value="-1"
+                    />
+                    <el-option
+                        v-for="item in groups.length"
+                        :key="item"
+                        :label="'Group '+item+' '"
+                        :value="item-1"
+                    />
+                  </el-select>
+                  <el-input
+                      v-else-if="toolsName == 'Search'"
+                      v-model="searchToolContent"
+                            placeholder="Please enter a gene name..."
+                            clearable
+                            @keyup.enter.native="searchGene"
+                  >
+                    <template #append>
+                      <el-button ref="searchElement" @click="searchGene">{{ lang.display.common.btn_search }}</el-button>
+                    </template>
+                  </el-input>
+                </el-card>
+              </el-col>
+            </el-row>
+            <el-card>
+              <Interactions :key="state" ref="inter" v-if="isLoad" :datas="viewGroupData"/>
+              <div v-else>
+                Please select a species
+              </div>
+            </el-card>
+
           </info-frame>
         </el-col>
       </el-row>
@@ -277,7 +370,8 @@ query()
             <el-button type="success" @click="windows.saveFile('#data')">
               Download Table
             </el-button>
-            <el-table id="data" :data="tablesData">
+            <el-table @selection-change="onSelected" id="data" :data="tablesData">
+              <el-table-column type="selection" :selectable="true" width="55" />
               <el-table-column prop="gene" label="Gene"></el-table-column>
               <el-table-column label="Tags">
                 <template #default="scope">

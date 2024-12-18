@@ -3,7 +3,7 @@ import RelationGraphComponent, {RGLine, RGLink, RGNode} from "relation-graph-vue
 
 let props = defineProps(["datas"])
 import RelationGraph, {RGOptions} from "relation-graph-vue3";
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 
   const graphRef = ref<RelationGraphComponent | null>(null);
 
@@ -23,6 +23,7 @@ import {onMounted, ref} from "vue";
   onMounted(() => {
     showGraph();
   });
+  watch(props.datas,()=>showGraph())
   const showGraph = async() => {
     const __graph_json_data = ref(props.datas);
     const graphInstance = graphRef.value!.getInstance();

@@ -53,7 +53,6 @@ if (active.length == 0){
       class="nav"
       :default-active="active"
   >
-    <!---
     <el-menu-item index="logo" >
       <img
           style="width: 150px"
@@ -61,7 +60,6 @@ if (active.length == 0){
           alt="LOGO2"
       />
     </el-menu-item>
-    --->
     <el-menu-item index="logo2" >
       <img
           style="width: 200px"
@@ -93,6 +91,7 @@ if (active.length == 0){
       {{ lang.display.components.TopMenu.assistant }}
     </el-menu-item>
     <div class="flex-grow" />
+    <!---
     <el-menu-item>
       <el-select
           v-model="language"
@@ -110,6 +109,7 @@ if (active.length == 0){
         />
       </el-select>
     </el-menu-item>
+    --->
     <el-menu-item index="theme"><ThemeToggleButton/></el-menu-item>
     <el-sub-menu index="2">
       <template #title>Welcome, Liu HX</template>
