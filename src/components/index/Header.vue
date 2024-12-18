@@ -47,19 +47,6 @@ function onWordClick(word:string){
 
 <template>
   <el-row>
-    <el-row class="news">
-      <el-col :span="1">
-        <el-image style="height: 20px;margin-left: 16px" fit="fill" src="/src/assets/index/news.png"></el-image>
-      </el-col>
-      <el-col :span="1">
-        <el-carousel direction="vertical" style="width: 50vw" height="30px" arrow="never" indicator-position="none" >
-          <el-carousel-item v-for="news in staticsData.news">
-            <el-text style="cursor: pointer;color: #f2eada" @click="windows.goLink(news.link)">{{news.title}}</el-text>
-          </el-carousel-item>
-        </el-carousel>
-      </el-col>
-    </el-row>
-
     <el-card class="info">
       <span class="title">FUNGA</span>
       <hr class="line">
@@ -76,6 +63,21 @@ function onWordClick(word:string){
         </el-col>
       </el-row>
     </el-card>
+    <div class="news">
+      <el-row>
+        <el-col :span="1">
+          <el-image style="height: 20px;margin-left: 16px" fit="fill" src="/src/assets/index/news.png"></el-image>
+        </el-col>
+        <el-col :span="1">
+          <el-carousel direction="vertical" style="width: 50vw" height="30px" arrow="never" indicator-position="none" >
+            <el-carousel-item v-for="news in staticsData.news">
+              <el-text style="cursor: pointer;color: #f2eada" @click="windows.goLink(news.link)">{{news.title}}</el-text>
+            </el-carousel-item>
+          </el-carousel>
+        </el-col>
+      </el-row>
+    </div>
+
     <div class="top-genes">
       <vue-word-cloud :animation-duration="5000" enter-animation="animated flipX" leave-animation="animated flipX" font-family="Baloo Bhaijaan" :color="randomHexColor" :spacing="1" :font-size-ratio="1/5" :words="staticsData.topGenes">
         <template #default="{text, weight, word}">
@@ -134,14 +136,14 @@ function onWordClick(word:string){
   position: absolute;
   z-index: 200;
   margin-left: 8%;
-  margin-top: 40%;
+  margin-top: 80vh;
 }
 .top-genes{
   position: absolute;
   margin-left: 55%;
   margin-top: 8%;
   z-index: 100;
-  width: 600px;
-  height: 600px;
+  width: 40%;
+  height: 70%;
 }
 </style>
